@@ -1,13 +1,27 @@
 // @flow
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
+import { View, Text, StyleSheet, Modal } from 'react-native';
+import Button from '../Button';
+import * as actions from '../actions';
 
-export default class Accounts extends React.Component {
+class Accounts extends React.Component {
   render() {
     return (
       <View style={styles.container}>
         <Text>Accounts</Text>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.props.isAddingAccount}
+        >
+          <Text>Add Account</Text>
+          <Button
+            title="Create Account"
+            onPress={this.props.createAccountRequested}
+          />
+        </Modal>
       </View>
     );
   }
@@ -21,3 +35,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = state => ({
+  isAddingAccount: state.accounts.isAddingAccount,
+});
+
+const mapDispatchToProps = {
+  createAccountRequested: actions.createAccountRequested,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Accounts);

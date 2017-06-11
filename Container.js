@@ -4,14 +4,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { connect } from 'react-redux';
 import Button from './Button';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import Accounts from './Accounts';
+import * as actions from './actions';
 
 const { object } = PropTypes;
 
-export default class Container extends React.Component {
+class Container extends React.Component {
   static propTypes = {
     navigator: object.isRequired,
   };
@@ -21,6 +23,7 @@ export default class Container extends React.Component {
       title: 'Accounts',
       component: Accounts,
       rightButtonSystemIcon: 'add',
+      onRightButtonPress: () => this.props.requestAddAccount(),
     });
   }
 
@@ -75,3 +78,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapDispatchToProps = {
+  requestAddAccount: actions.addAccountRequested,
+};
+export default connect(null, mapDispatchToProps)(Container);

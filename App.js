@@ -2,10 +2,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Provider } from 'react-redux';
 import Container from './Container';
 import { NavigatorIOS } from 'react-native';
 import * as firebase from 'firebase';
 import Config from './config';
+import reducers from './reducers';
+import configureStore from './configureStore';
 
 const config = {
   apiKey: Config.FIREBASE_API_KEY,
@@ -15,19 +18,23 @@ const config = {
 };
 firebase.initializeApp(config);
 
+const store = configureStore();
+
 export default class App extends React.Component {
   render() {
     return (
-      <NavigatorIOS
-        style={{ flex: 1 }}
-        initialRoute={{
-          component: Container,
-          title: 'Main',
-          passProps: {
-            currentUser: firebase.User,
-          },
-        }}
-      />
+      <Provider store={store}>
+        <NavigatorIOS
+          style={{ flex: 1 }}
+          initialRoute={{
+            component: Container,
+            title: 'Main',
+            passProps: {
+              currentUser: firebase.User,
+            },
+          }}
+        />
+      </Provider>
     );
   }
 }
