@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import Container from './Container';
+import Container from './components/Container';
 import { NavigatorIOS } from 'react-native';
 import * as firebase from 'firebase';
 import Config from './config';
