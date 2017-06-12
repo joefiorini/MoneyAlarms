@@ -9,7 +9,7 @@ import Button from './Button';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import Accounts from './Accounts';
-import * as actions from './actions';
+import * as actions from '../actions';
 
 const { object } = PropTypes;
 
@@ -17,6 +17,15 @@ class Container extends React.Component {
   static propTypes = {
     navigator: object.isRequired,
   };
+
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.navigateToAccounts();
+      }
+    });
+    // firebase.auth().onIdTokenChanged(saveIdToken);
+  }
 
   navigateToAccounts() {
     this.props.navigator.push({
@@ -54,7 +63,8 @@ class Container extends React.Component {
   }
 
   render() {
-    if (firebase.User) {
+    console.log(firebase.auth().currentUser);
+    if (firebase.auth().currentUser) {
       setTimeout(this.navigateToAccounts.bind(this));
     }
 
