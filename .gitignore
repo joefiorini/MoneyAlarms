@@ -2,3 +2,10 @@ node_modules/
 .expo/
 npm-debug.*
 .env
+bin
+obj
+
+azure/packages
+paket.exe
+paket.exe.config
+MoneyAlarms.PublishSettings

@@ -6,6 +6,7 @@
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
     "flow-bin": "^0.42.0",
     "jest-expo": "~1.0.1",
+    "k-scratch": "^0.1.7",
     "react-native-scripts": "0.0.31",
     "react-test-renderer": "16.0.0-alpha.6"
   },
