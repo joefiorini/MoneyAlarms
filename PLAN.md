@@ -26,10 +26,10 @@ TransactionsDto: {
 }
 
 functions:
-- async exchangeTokens: (TokenExchangeDto) -> ()
-- async getAccessToken: publicToken -> AccessToken
+- async exchangeTokens: (PlaidService, TokenExchangeDto) -> ()
+- async getAccessToken: (PlaidService, publicToken) -> AccessToken
 - makeAccount: FirebaseUserId -> PlaidAccountId -> AccessToken -> Account
-- async saveAccount: AccessToken -> ()
+- async saveAccount: saveFirebaseData -> Account -> Result<Unit>
 
 ### Initial Update
 initialTransactionUpdate: Transaction List -> ()
