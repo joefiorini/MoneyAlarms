@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 
+set -e
+
 fsharpc \
     --target:library \
     --out:azure/bin/MoneyAlarms.dll \
     --standalone \
     --debug:pdbonly \
     azure/Utils.fs
+
+for function_json in $( ls azure/*/function.json ); do
+    app_dir=$(dirname $function_json)
+    [[ -L "$app_dir/bin" ]] || ln -s $(pwd)/azure/bin $app_dir
+done
+
 
 # fsharpc \
 #     --out:azure/bin/MoneyAlarms.dll \

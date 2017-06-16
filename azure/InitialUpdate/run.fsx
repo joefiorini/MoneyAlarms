@@ -1,4 +1,3 @@
-#I "..\\..\\..\\home\\site\\wwwroot\\bin"
 #r "System.Net.Http"
 #r "Newtonsoft.Json"
 #r "MoneyAlarms.dll"
