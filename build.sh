@@ -7,7 +7,7 @@ fsharpc \
     --out:azure/bin/MoneyAlarms.dll \
     --standalone \
     --debug:pdbonly \
-    azure/Utils.fs
+    azure/*.fs
 
 for function_json in $( ls azure/*/function.json ); do
     app_dir=$(dirname $function_json)
