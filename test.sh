@@ -4,18 +4,55 @@ set -e
 
 cd azure
 
+try_package_dir() {
+    group="$3"
+    version=$2
+    package="$1"
+    attempt="packages/$group/$package/lib/$version"
+    if [[ -d "$attempt" ]]; then
+        echo "$attempt"
+    else
+        echo ""
+    fi
+}
+
+build_refs_in_group() {
+    group="$1"
+    ref_args=""
+
+    for package in $(ls packages/$group); do
+        VERSIONS=(net45 net40 net461)
+        for version in ${VERSIONS[@]}; do
+            dir="$(try_package_dir "$package" "$version" "$group")"
+            if [[ ! -z $dir ]]; then
+                package_dir="$dir"
+            else
+                continue
+            fi
+        done
+
+        # package_dir="$(try_package_dir "$package" net45)" || "$(try_package_dir "$package" net40)" || "$(try_package_dir "$package" net461)"
+        if [[ -z "$package_dir" ]]; then
+            echo "Could not find dir for package: $package"
+            exit 1;
+        fi
+        ref_args+="--lib:$package_dir "
+    done
+    echo $ref_args
+}
+
+echo "here it is:"
+libs="$(build_refs_in_group "testing")"
+echo $libs
 fsharpc \
-    --target:library \
-    --out:bin/MoneyAlarms.dll \
+    --target:exe \
+    --out:bin/MoneyAlarms.Test.exe \
     --standalone \
-    --debug:pdbonly \
-    *.fs
-
-for function_json in $( ls */function.json ); do
-    app_dir=$(dirname $function_json)
-    [[ -L "$app_dir/bin" ]] || ln -s $(pwd)/bin $app_dir
-done
-
+    $libs \
+    --lib:"$(pwd)/bin" \
+    -r Expecto \
+    -r MoneyAlarms \
+    test/*.fs
 
 # fsharpc \
 #     --out:azure/bin/MoneyAlarms.dll \
