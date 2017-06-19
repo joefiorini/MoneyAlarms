@@ -20,6 +20,7 @@ type FirebaseAccount =
       AccountId: AccountId
     }
 
-type FirebaseError = string
+type FirebaseError =
+    | FirebaseError of string
 
 type FirebaseCreateAccount = FirebaseServiceConfig -> FirebaseAccount -> Result<FirebaseAccount,FirebaseError>

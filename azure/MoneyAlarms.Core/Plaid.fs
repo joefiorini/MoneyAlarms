@@ -14,8 +14,10 @@ type PlaidServiceConfig =
       Host: PlaidHost
     }
 
-type PlaidError = string
+type PlaidError =
+    | PlaidError of string
 
+type PlaidServiceEndpoint<'t> = PlaidServiceConfig -> 't
 type ConfigurePlaidService = PlaidClientId -> PlaidSecret -> PlaidHost -> PlaidServiceConfig
 type PlaidExchangeToken = PlaidServiceConfig -> PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, PlaidError>
 
@@ -28,12 +30,14 @@ type PlaidExchangeToken = PlaidServiceConfig -> PlaidPublicToken -> Result<Plaid
 // """
 // type PlaidTokenExchangeBody = JsonProvider<tokenExchangeSample>
 
-let configurePlaidService: ConfigurePlaidService =
-    fun clientId secret host ->
-      { ClientId = clientId
-        Secret = secret
-        Host = host
-      }
+// let configurePlaidService<'t>: PlaidServiceEndpoint<'t> =
+//     fun clientId secret host endpoint ->
+//         let serviceConfig =
+//           { ClientId = clientId
+//             Secret = secret
+//             Host = host
+//           }
+//         endpoint serviceConfig
 
 let plaidExchangeToken: PlaidExchangeToken =
     fun plaidServiceConfig publicToken -> Ok ("test", "test")

@@ -18,7 +18,7 @@ let Run(req: HttpRequestMessage, log: TraceWriter) =
           return req.CreateResponse(HttpStatusCode.BadRequest, "Need a body")
         else
           let dto = JsonConvert.DeserializeObject<TokenExchangeDto>(data)
-          let plaidExchangeToken' = Plaid.configurePlaidService "" "" "" |> Plaid.plaidExchangeToken
+          let plaidExchangeToken' = Plaid.configurePlaidService "" "" "" Plaid.plaidExchangeToken
           let! account = (createAccount plaidExchangeToken' dto) |> Async.AwaitTask
 
           match exchangeResult with

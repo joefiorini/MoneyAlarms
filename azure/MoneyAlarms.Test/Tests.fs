@@ -3,17 +3,39 @@ module Tests
 open Expecto
 open MoneyAlarms.Core
 open Firebase
+open Plaid
 
-let plaidExchangeToken publicToken =
-    Ok ("AccessToken", "AccountId")
+type CheckError = MoneyAlarmsError -> MoneyAlarmsError
 
-let firebaseCreateAccount account =
-    Ok account
+let expectResult actualR expected msg =
+  Expect.isOk actualR msg
+  match actualR with
+      | Ok actual -> Expect.equal actual expected msg
+      | Error e -> Tests.failtest (e.ToString())
+  ()
+
+let expectError actualR expected msg =
+  Expect.isError actualR msg
+  match actualR with
+      | Ok _ -> Tests.failtest "Not an error"
+      | Error (MoneyAlarms.Core.PlaidError (PlaidError s)) ->
+        Expect.equal s expected msg
+      | Error (MoneyAlarms.Core.FirebaseError (FirebaseError s)) ->
+        Expect.equal s expected msg
+      | Error (MoneyAlarms.Core.ExchangeTokenError s) ->
+        Expect.equal s expected msg
+  ()
 
 [<Tests>]
 let tests =
   testList "ExchangeTokens" [
     testCase "Returns account on success" <| fun _ ->
+      let plaidExchangeToken publicToken =
+        Ok ("AccessToken", "AccountId")
+
+      let firebaseCreateAccount account =
+        Ok account
+
       let dto: TokenExchangeDto =
         { PlaidPublicToken = "PublicToken"
           FirebaseUserId = "UserId"
@@ -23,10 +45,53 @@ let tests =
           plaidExchangeToken
           firebaseCreateAccount
           dto
-      match account with
-      | Ok a ->
-        Expect.equal a.ItemAccessToken "AccessToken" "ItemAccessToken"
-        Expect.equal a.AccountId "AccountId" "PlaidAccountId"
-        Expect.equal a.UserId "UserId" "FirebaseUserId"
-      | Error e -> Tests.failtest "Error calling createAccount"
+
+      let expected =
+        { ItemAccessToken = "AccessToken"
+          AccountId = "AccountId"
+          UserId = "UserId"
+        }
+
+      expectResult account expected "Expected account to be equal"
+
+    testCase "Returns error when plaid fails" <| fun _ ->
+      let dto =
+        { PlaidPublicToken = "Public"
+          FirebaseUserId = ""
+        }
+
+      let plaidExchangeToken publicToken =
+        Plaid.PlaidError "Plaid Error" |> Error
+
+      let firebaseCreateAccount account =
+        Firebase.FirebaseError "Firebase Error" |> Error
+
+      let result =
+        ExchangeTokens.createAccount
+          plaidExchangeToken
+          firebaseCreateAccount
+          dto
+
+      expectError result "Plaid Error" "Not a plaid error"
+
+    testCase "Returns error when firebase fails" <| fun _ ->
+      let dto =
+        { PlaidPublicToken = "Public"
+          FirebaseUserId = ""
+        }
+
+      let plaidExchangeToken publicToken =
+        Ok ("AccessToken", "AccountId")
+
+      let firebaseCreateAccount account =
+        Firebase.FirebaseError "Firebase Error" |> Error
+
+      let result =
+        ExchangeTokens.createAccount
+          plaidExchangeToken
+          firebaseCreateAccount
+          dto
+
+      expectError result "Firebase Error" "Not a firebase error"
+
   ]
