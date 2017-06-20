@@ -58,8 +58,9 @@ let tests =
         // TODO: Make PlaidError type match structure printed here and use JsonProvider
         // to parse it
         match result with
-          | Error (PlaidError e) -> printfn "Got error: %s" e
+          | Error (PlaidError (InvalidPublicToken, e)) ->
+            Expect.equal e.ErrorType "INVALID_INPUT"
+          | Error e -> Tests.failtest "Got unexpected error type %O"
 
-        printfn "result: %O" result
         Expect.isError result "Result is error"
     ]

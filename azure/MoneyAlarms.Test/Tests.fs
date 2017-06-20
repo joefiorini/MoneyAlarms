@@ -7,6 +7,8 @@ open Plaid
 
 type CheckError = MoneyAlarmsError -> MoneyAlarmsError
 
+let exampleError = DetailedError.GetSample()
+
 let expectResult actualR expected msg =
   Expect.isOk actualR msg
   match actualR with
@@ -18,8 +20,6 @@ let expectError actualR expected msg =
   Expect.isError actualR msg
   match actualR with
       | Ok _ -> Tests.failtest "Not an error"
-      | Error (MoneyAlarms.Core.PlaidError (PlaidError s)) ->
-        Expect.equal s expected msg
       | Error (MoneyAlarms.Core.FirebaseError (FirebaseError s)) ->
         Expect.equal s expected msg
       | Error (MoneyAlarms.Core.ExchangeTokenError s) ->
@@ -61,7 +61,7 @@ let tests =
         }
 
       let plaidExchangeToken publicToken =
-        Plaid.PlaidError "Plaid Error" |> Error
+        Plaid.PlaidError (UnknownError, exampleError) |> Error
 
       let firebaseCreateAccount account =
         Firebase.FirebaseError "Firebase Error" |> Error
@@ -72,7 +72,12 @@ let tests =
           firebaseCreateAccount
           dto
 
-      expectError result "Plaid Error" "Not a plaid error"
+      match result with
+        | Error (MoneyAlarms.Core.PlaidError (PlaidError (errorCode, detailedError))) ->
+           Expect.equal errorCode UnknownError "UnknownError"
+           Expect.equal detailedError exampleError "Detailed Error"
+
+      Expect.isError result "isError result"
 
     testCase "Returns error when firebase fails" <| fun _ ->
       let dto =

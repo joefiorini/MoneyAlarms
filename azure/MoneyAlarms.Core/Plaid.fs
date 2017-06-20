@@ -19,15 +19,9 @@ type PlaidServiceConfig =
       Host: PlaidHost
     }
 
-type PlaidError =
-    | PlaidError of string
-
 // Configuration
 type PlaidServiceEndpoint<'t> = PlaidServiceConfig -> 't
 type ConfigurePlaidService = HttpClient -> PlaidClientId -> PlaidSecret -> PlaidHost -> PlaidServiceConfig
-
-// Endpoints
-type ExchangeToken = PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, PlaidError>
 
 [<Literal>]
 let tokenExchangeSample = """
@@ -48,6 +42,105 @@ let tokenExchangeResponseSample = """
     }
 """
 type PlaidTokenExchangeResponseBody = JsonProvider<tokenExchangeResponseSample>
+
+[<Literal>]
+let detailedErrorSample = """
+{
+  "display_message": "something",
+  "error_code": "INVALID_PUBLIC_TOKEN",
+  "error_message": "provided public token is expired. Public tokens expire 30 minutes after creation at which point they can no longer be exchanged",
+  "error_type": "INVALID_INPUT",
+  "request_id": "qPqXA"
+}
+"""
+type DetailedError = JsonProvider<detailedErrorSample>
+
+type ErrorCode =
+    | InvalidPublicToken
+    | InvalidAccessToken
+    | InvalidApiKeys
+    | InvalidProduct
+    | InvalidAccountId
+    | InvalidInstitution
+    | MissingFields
+    | UnknownFields
+    | InvalidField
+    | InvalidBody
+    | InvalidHeaders
+    | NotFound
+    | SandboxOnly
+    | AdditionLimit
+    | AuthLimit
+    | TransactionsLimit
+    | IdentityLimit
+    | IncomeLimit
+    | RateLimit
+    | ItemGetLimit
+    | InternalServerError
+    | PlannedMaintenance
+    | InvalidCredentials
+    | InvalidMfa
+    | ItemLocked
+    | ItemLoginRequired
+    | ItemNotSupported
+    | UserSetupRequired
+    | MfaNotSupported
+    | NoAccounts
+    | NoAuthAccounts
+    | ProductNotReady
+    | InstitutionDown
+    | InstitutionNotResponding
+    | InstitutionNotAvailable
+    | InstitutionNoLongerSupported
+    | UnknownError
+
+type PlaidError =
+    | PlaidError of (ErrorCode * DetailedError.Root)
+
+type ErrorCodeFromString = string -> ErrorCode
+let errorCodeFromString =
+    function
+        | "INVALID_CREDENTIALS" -> InvalidCredentials
+        | "MISSING_FIELDS" -> MissingFields
+        | "UNKNOWN_FIELDS" -> UnknownFields
+        | "INVALID_FIELD" -> InvalidField
+        | "INVALID_BODY" -> InvalidBody
+        | "INVALID_HEADERS" -> InvalidHeaders
+        | "NOT_FOUND" -> NotFound
+        | "SANDBOX_ONLY" -> SandboxOnly
+        | "INVALID_API_KEYS" -> InvalidApiKeys
+        | "INVALID_ACCESS_TOKEN" -> InvalidAccessToken
+        | "INVALID_PUBLIC_TOKEN" -> InvalidPublicToken
+        | "INVALID_PRODUCT" -> InvalidProduct
+        | "INVALID_ACCOUNT_ID" -> InvalidAccountId
+        | "INVALID_INSTITUTION" -> InvalidInstitution
+        | "ADDITION_LIMIT" -> AdditionLimit
+        | "AUTH_LIMIT" -> AuthLimit
+        | "TRANSACTIONS_LIMIT" -> TransactionsLimit
+        | "IDENTITY_LIMIT" -> IdentityLimit
+        | "INCOME_LIMIT" -> IncomeLimit
+        | "RATE_LIMIT" -> RateLimit
+        | "ITEM_GET_LIMIT" -> ItemGetLimit
+        | "INTERNAL_SERVER_ERROR" -> InternalServerError
+        | "PLANNED_MAINTENANCE" -> PlannedMaintenance
+        | "INVALID_CREDENTIALS" -> InvalidCredentials
+        | "INVALID_MFA" -> InvalidMfa
+        | "ITEM_LOCKED" -> ItemLocked
+        | "ITEM_LOGIN_REQUIRED" -> ItemLoginRequired
+        | "ITEM_NOT_SUPPORTED" -> ItemNotSupported
+        | "USER_SETUP_REQUIRED" -> UserSetupRequired
+        | "MFA_NOT_SUPPORTED" -> MfaNotSupported
+        | "NO_ACCOUNTS" -> NoAccounts
+        | "NO_AUTH_ACCOUNTS" -> NoAuthAccounts
+        | "PRODUCT_NOT_READY" -> ProductNotReady
+        | "INSTITUTION_DOWN" -> InstitutionDown
+        | "INSTITUTION_NOT_RESPONDING" -> InstitutionNotResponding
+        | "INSTITUTION_NOT_AVAILABLE" -> InstitutionNotAvailable
+        | "INSTITUTION_NO_LONGER_SUPPORTED" -> InstitutionNoLongerSupported
+        | _ -> UnknownError
+
+// Endpoints
+type ExchangeToken = PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, PlaidError>
 
 let configurePlaidService: ConfigurePlaidService =
     fun httpClient clientId secret host ->
@@ -81,7 +174,9 @@ let plaidExchangeToken: PlaidServiceEndpoint<ExchangeToken> =
             let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
 
             if not response.IsSuccessStatusCode then
-              return Error (PlaidError content)
+              let parsedError = DetailedError.Parse content
+              let errorCode = errorCodeFromString parsedError.ErrorCode
+              return Error (PlaidError (errorCode, parsedError))
             else
               let parsedContent = PlaidTokenExchangeResponseBody.Parse content
               return Ok (parsedContent.AccessToken, parsedContent.ItemId)
