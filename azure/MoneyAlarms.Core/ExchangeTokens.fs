@@ -5,9 +5,7 @@ open Firebase
 open Microsoft.FSharp.Reflection
 
 type MakeAccount = FirebaseUserId -> PlaidAccessToken -> AccountId -> FirebaseAccount
-type ExchangeToken = PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, Plaid.PlaidError>
-type DoCreateAccount = FirebaseAccount -> Result<FirebaseAccount,FirebaseError>
-type CreateAccount = ExchangeToken -> DoCreateAccount -> TokenExchangeDto -> Result<FirebaseAccount, MoneyAlarmsError>
+type CreateAccount = Plaid.ExchangeToken -> Firebase.CreateAccount -> TokenExchangeDto -> Result<FirebaseAccount, MoneyAlarmsError>
 
 let makeAccount: MakeAccount =
     fun firebaseUserId itemAccessToken plaidAccountId ->

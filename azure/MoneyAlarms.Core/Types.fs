@@ -21,6 +21,3 @@ type MoneyAlarmsError =
     | PlaidError of Plaid.PlaidError
     | FirebaseError of Firebase.FirebaseError
     | ExchangeTokenError of string
-
-
-type GetAccessToken = Plaid.PlaidExchangeToken -> Plaid.PlaidPublicToken -> Result<AccountId * ItemAccessToken, MoneyAlarmsError>

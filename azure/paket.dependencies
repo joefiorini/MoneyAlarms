@@ -8,6 +8,7 @@ group Testing
   nuget Expecto
   nuget Expecto.BenchmarkDotNet
   nuget Expecto.FsCheck
+nuget Scotch
 
 group Runtime
   source https://www.nuget.org/api/v2

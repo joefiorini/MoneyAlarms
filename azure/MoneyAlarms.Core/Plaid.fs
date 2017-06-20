@@ -1,5 +1,7 @@
 module Plaid
 
+open System.Net.Http
+
 type PlaidClientId = string
 type PlaidSecret = string
 type PlaidAccountId = string
@@ -9,7 +11,8 @@ type PlaidItemId = string
 type PlaidAccessToken = string
 
 type PlaidServiceConfig =
-    { ClientId: PlaidClientId
+    { HttpClient: HttpClient
+      ClientId: PlaidClientId
       Secret: PlaidSecret
       Host: PlaidHost
     }
@@ -17,9 +20,12 @@ type PlaidServiceConfig =
 type PlaidError =
     | PlaidError of string
 
+// Configuration
 type PlaidServiceEndpoint<'t> = PlaidServiceConfig -> 't
-type ConfigurePlaidService = PlaidClientId -> PlaidSecret -> PlaidHost -> PlaidServiceConfig
-type PlaidExchangeToken = PlaidServiceConfig -> PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, PlaidError>
+type ConfigurePlaidService = HttpClient -> PlaidClientId -> PlaidSecret -> PlaidHost -> PlaidServiceConfig
+
+// Endpoints
+type ExchangeToken = PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, PlaidError>
 
 // let tokenExchangeSample = """
 //     {
@@ -30,16 +36,15 @@ type PlaidExchangeToken = PlaidServiceConfig -> PlaidPublicToken -> Result<Plaid
 // """
 // type PlaidTokenExchangeBody = JsonProvider<tokenExchangeSample>
 
-// let configurePlaidService<'t>: PlaidServiceEndpoint<'t> =
-//     fun clientId secret host endpoint ->
-//         let serviceConfig =
-//           { ClientId = clientId
-//             Secret = secret
-//             Host = host
-//           }
-//         endpoint serviceConfig
+let configurePlaidService: ConfigurePlaidService =
+    fun httpClient clientId secret host ->
+      { HttpClient = httpClient
+        ClientId = clientId
+        Secret = secret
+        Host = host
+      }
 
-let plaidExchangeToken: PlaidExchangeToken =
+let plaidExchangeToken: PlaidServiceEndpoint<ExchangeToken> =
     fun plaidServiceConfig publicToken -> Ok ("test", "test")
     // let body = PlaidTokenExchangeBody
     //     ( plaidServiceConfig.ClientId,
