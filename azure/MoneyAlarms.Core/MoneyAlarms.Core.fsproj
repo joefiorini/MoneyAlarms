@@ -38,10 +38,11 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MoneyAlarms.Core.fs" />
+    <Compile Include="HttpUtils.fs" />
     <Compile Include="Firebase.fs" />
     <Compile Include="Plaid.fs" />
     <Compile Include="Types.fs" />
+    <Compile Include="MoneyAlarms.Core.fs" />
     <Compile Include="ExchangeTokens.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

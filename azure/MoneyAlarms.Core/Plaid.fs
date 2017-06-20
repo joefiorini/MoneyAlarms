@@ -1,8 +1,9 @@
 module Plaid
 
 open System
-open System.Net.Http
 open FSharp.Data
+open System.Net.Http
+open HttpUtils
 
 type PlaidClientId = string
 type PlaidSecret = string
@@ -152,7 +153,6 @@ let configurePlaidService: ConfigurePlaidService =
 
 let plaidExchangeToken: PlaidServiceEndpoint<ExchangeToken> =
     fun plaidServiceConfig publicToken ->
-        async {
             let url = plaidServiceConfig.Host + "/item/public_token/exchange"
             let requestBody =
               PlaidTokenExchangeRequestBody.Root
@@ -161,26 +161,16 @@ let plaidExchangeToken: PlaidServiceEndpoint<ExchangeToken> =
                   publicToken
                 )
 
-            let request = new HttpRequestMessage()
-            request.RequestUri <- new Uri(url)
-            request.Method <- System.Net.Http.HttpMethod.Post
-
-            let reqContent = new StringContent(requestBody.JsonValue.ToString())
-            reqContent.Headers.ContentType <- new Headers.MediaTypeHeaderValue("application/json")
-            request.Content <- reqContent
-
-            let! response = plaidServiceConfig.HttpClient.SendAsync(request) |> Async.AwaitTask
-
-            let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+            let (response: HttpResponseMessage, content) =
+              PostJson.sync plaidServiceConfig.HttpClient url (requestBody.JsonValue.ToString())
 
             if not response.IsSuccessStatusCode then
               let parsedError = DetailedError.Parse content
               let errorCode = errorCodeFromString parsedError.ErrorCode
-              return Error (PlaidError (errorCode, parsedError))
+              Error (PlaidError (errorCode, parsedError))
             else
               let parsedContent = PlaidTokenExchangeResponseBody.Parse content
-              return Ok (parsedContent.AccessToken, parsedContent.ItemId)
-        } |> Async.RunSynchronously
+              Ok (parsedContent.AccessToken, parsedContent.ItemId)
 
     // let body = PlaidTokenExchangeBody
     //     ( plaidServiceConfig.ClientId,
