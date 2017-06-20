@@ -124,7 +124,6 @@ let errorCodeFromString =
         | "ITEM_GET_LIMIT" -> ItemGetLimit
         | "INTERNAL_SERVER_ERROR" -> InternalServerError
         | "PLANNED_MAINTENANCE" -> PlannedMaintenance
-        | "INVALID_CREDENTIALS" -> InvalidCredentials
         | "INVALID_MFA" -> InvalidMfa
         | "ITEM_LOCKED" -> ItemLocked
         | "ITEM_LOGIN_REQUIRED" -> ItemLoginRequired

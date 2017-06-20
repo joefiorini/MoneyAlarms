@@ -41,8 +41,10 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ScotchSetup.fs" />
     <Compile Include="Tests.fs" />
     <Compile Include="PlaidTests.fs" />
+    <Compile Include="FirebaseTests.fs" />
     <Compile Include="Main.fs" />
     <None Include="App.config" />
   </ItemGroup>

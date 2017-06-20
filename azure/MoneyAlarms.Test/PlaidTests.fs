@@ -2,34 +2,15 @@ module PlaidTests
 
 open Expecto
 open System
-open System.IO
 open Scotch
-open DotEnvFile
-
 open Plaid
-
-// printfn "current dir: %s" ()
-let cassettePath = AppDomain.CurrentDomain.BaseDirectory + "../MoneyAlarms.Test/cassettes"
-let dotEnvPath = AppDomain.CurrentDomain.BaseDirectory + "../../.env"
-let vars = DotEnvFile.LoadFile(dotEnvPath)
-DotEnvFile.InjectIntoEnvironment(vars)
-
-let shouldRecord =
-  Environment.GetEnvironmentVariable "SCOTCH_MODE_RECORDING" = "true"
-
-let scotchMode =
-  if shouldRecord then
-      printfn "Scotch set to Record"
-      ScotchMode.Recording
-  else
-      printfn "Scotch set to Playback"
-      ScotchMode.Replaying
+open ScotchSetup
 
 [<Tests>]
 let tests =
   testList "Plaid Client"
     [ testCase "returns the public token" <| fun _ ->
-        let httpClient = HttpClients.NewHttpClient(Path.Combine(cassettePath, "plaid.successes.json"), scotchMode)
+        let httpClient = httpClientForCassette "plaid.successes.json"
 
         let serviceConfig =
           configurePlaidService
@@ -43,7 +24,7 @@ let tests =
         Expect.equal result (Ok expected) "Result"
 
       testCase "returns error for invalid token" <| fun _ ->
-        let httpClient = HttpClients.NewHttpClient(Path.Combine(cassettePath, "plaid.errors.json"), scotchMode)
+        let httpClient = httpClientForCassette "plaid.errors.json"
 
         let serviceConfig =
           configurePlaidService

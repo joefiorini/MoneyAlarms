@@ -1,5 +1,7 @@
 module Firebase
 
+open System.Net.Http
+
 type FirebaseUserId = string
 type ItemAccessToken = string
 type AccountId = string
@@ -12,6 +14,7 @@ type FirebaseServiceConfig =
       StorageBucket: string
       MessageSenderId: string
       UserToken: string
+      HttpClient: HttpClient
     }
 
 type FirebaseAccount =
