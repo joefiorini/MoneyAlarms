@@ -1,0 +1,46 @@
+[
+  {
+    "request": {
+      "method": "POST",
+      "uri": "https://sandbox.plaid.com/item/public_token/exchange",
+      "requestHeaders": [],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json"
+        },
+        {
+          "Content-Length": "164"
+        }
+      ],
+      "body": "{\n  \"client_id\": \"57001580152e16ec4a51293c\",\n  \"secret\": \"0fc8e1e051782bd8c7a0a890c9ed7a\",\n  \"public_token\": \"public-sandbox-c265c2f5-55f3-453c-b0ca-5e7b3cbcb1b1\"\n}"
+    },
+    "response": {
+      "status": {
+        "code": "400",
+        "message": "Bad Request"
+      },
+      "responseHeaders": [
+        {
+          "Date": "Tue, 20 Jun 2017 14:35:47 GMT"
+        },
+        {
+          "Server": "nginx"
+        },
+        {
+          "Connection": "keep-alive"
+        }
+      ],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json"
+        },
+        {
+          "Content-Length": "277"
+        }
+      ],
+      "body": "{\n  \"display_message\": null,\n  \"error_code\": \"INVALID_PUBLIC_TOKEN\",\n  \"error_message\": \"provided public token is expired. Public tokens expire 30 minutes after creation at which point they can no longer be exchanged\",\n  \"error_type\": \"INVALID_INPUT\",\n  \"request_id\": \"qPqXA\"\n}",
+      "httpVersion": "1.1"
+    },
+    "recordedAt": "2017-06-20T10:35:47.074-04:00"
+  }
+]

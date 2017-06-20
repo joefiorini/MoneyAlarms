@@ -1,6 +1,8 @@
 module Plaid
 
+open System
 open System.Net.Http
+open FSharp.Data
 
 type PlaidClientId = string
 type PlaidSecret = string
@@ -27,14 +29,25 @@ type ConfigurePlaidService = HttpClient -> PlaidClientId -> PlaidSecret -> Plaid
 // Endpoints
 type ExchangeToken = PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, PlaidError>
 
-// let tokenExchangeSample = """
-//     {
-//         "client_id": String,
-//         "secret": String,
-//         "public_token": "public-sandbox-fb7cca4a-82e6-4707"
-//     }
-// """
-// type PlaidTokenExchangeBody = JsonProvider<tokenExchangeSample>
+[<Literal>]
+let tokenExchangeSample = """
+    {
+        "client_id": "client_id",
+        "secret": "secret",
+        "public_token": "public-sandbox-fb7cca4a-82e6-4707"
+    }
+"""
+type PlaidTokenExchangeRequestBody = JsonProvider<tokenExchangeSample>
+
+[<Literal>]
+let tokenExchangeResponseSample = """
+    {
+        "access_token": "access_token",
+        "item_id": "item_id",
+        "request_id": "request_id"
+    }
+"""
+type PlaidTokenExchangeResponseBody = JsonProvider<tokenExchangeResponseSample>
 
 let configurePlaidService: ConfigurePlaidService =
     fun httpClient clientId secret host ->
@@ -45,7 +58,35 @@ let configurePlaidService: ConfigurePlaidService =
       }
 
 let plaidExchangeToken: PlaidServiceEndpoint<ExchangeToken> =
-    fun plaidServiceConfig publicToken -> Ok ("test", "test")
+    fun plaidServiceConfig publicToken ->
+        async {
+            let url = plaidServiceConfig.Host + "/item/public_token/exchange"
+            let requestBody =
+              PlaidTokenExchangeRequestBody.Root
+                ( plaidServiceConfig.ClientId,
+                  plaidServiceConfig.Secret,
+                  publicToken
+                )
+
+            let request = new HttpRequestMessage()
+            request.RequestUri <- new Uri(url)
+            request.Method <- System.Net.Http.HttpMethod.Post
+
+            let reqContent = new StringContent(requestBody.JsonValue.ToString())
+            reqContent.Headers.ContentType <- new Headers.MediaTypeHeaderValue("application/json")
+            request.Content <- reqContent
+
+            let! response = plaidServiceConfig.HttpClient.SendAsync(request) |> Async.AwaitTask
+
+            let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+
+            if not response.IsSuccessStatusCode then
+              return Error (PlaidError content)
+            else
+              let parsedContent = PlaidTokenExchangeResponseBody.Parse content
+              return Ok (parsedContent.AccessToken, parsedContent.ItemId)
+        } |> Async.RunSynchronously
+
     // let body = PlaidTokenExchangeBody
     //     ( plaidServiceConfig.ClientId,
     //       plaidServiceConfig.Secret,

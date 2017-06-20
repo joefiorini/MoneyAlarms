@@ -4,6 +4,7 @@ NUGET
       FSharp.Core (>= 4.0.1.7-alpha) - framework: >= net463, >= netstandard16
       NETStandard.Library (>= 1.6) - framework: >= net463, >= netstandard16
       System.Xml.XDocument (>= 4.0.11) - framework: >= net463, >= netstandard16
+    DotEnvFile (1.0)
     Expecto (5.0)
       Argu (>= 3.7)
       FSharp.Core (>= 4.1.12) - framework: >= net10, netstandard10, netstandard11, netstandard12, netstandard13, netstandard14, netstandard15

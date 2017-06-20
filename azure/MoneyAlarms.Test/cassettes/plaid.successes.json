@@ -1,0 +1,58 @@
+[
+  {
+    "request": {
+      "method": "POST",
+      "uri": "https://sandbox.plaid.com/item/public_token/exchange",
+      "requestHeaders": [],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json"
+        },
+        {
+          "Content-Length": "164"
+        }
+      ],
+      "body": "{\n  \"client_id\": \"57001580152e16ec4a51293c\",\n  \"secret\": \"0fc8e1e051782bd8c7a0a890c9ed7a\",\n  \"public_token\": \"public-sandbox-75bd6831-ce8c-47a4-92ab-b80616d54674\"\n}"
+    },
+    "response": {
+      "status": {
+        "code": "200",
+        "message": "OK"
+      },
+      "responseHeaders": [
+        {
+          "Date": "Tue, 20 Jun 2017 14:40:49 GMT"
+        },
+        {
+          "Server": "nginx"
+        },
+        {
+          "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "X-Content-Type-Options": "nosniff"
+        },
+        {
+          "X-Frame-Options": "DENY"
+        },
+        {
+          "X-XSS-Protection": "1; mode=block"
+        },
+        {
+          "Connection": "keep-alive"
+        }
+      ],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json"
+        },
+        {
+          "Content-Length": "154"
+        }
+      ],
+      "body": "{\n  \"access_token\": \"access-sandbox-265c9150-193c-4b8e-a6c2-189411592c7e\",\n  \"item_id\": \"LKLD5AVZLMSDkvgpdXvKF949PEa1nlcBwrmpG\",\n  \"request_id\": \"g0XV0\"\n}",
+      "httpVersion": "1.1"
+    },
+    "recordedAt": "2017-06-20T10:40:49.244-04:00"
+  }
+]
