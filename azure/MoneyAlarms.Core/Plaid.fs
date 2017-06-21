@@ -152,28 +152,21 @@ let configurePlaidService: ConfigurePlaidService =
 
 let plaidExchangeToken: PlaidServiceEndpoint<ExchangeToken> =
     fun plaidServiceConfig publicToken ->
-            let url = plaidServiceConfig.Host + "/item/public_token/exchange"
-            let requestBody =
-              PlaidTokenExchangeRequestBody.Root
-                ( plaidServiceConfig.ClientId,
-                  plaidServiceConfig.Secret,
-                  publicToken
-                )
+      let url = plaidServiceConfig.Host + "/item/public_token/exchange"
+      let requestBody =
+        PlaidTokenExchangeRequestBody.Root
+          ( plaidServiceConfig.ClientId,
+            plaidServiceConfig.Secret,
+            publicToken
+          )
 
-            let (response: HttpResponseMessage, content) =
-              PostJson.sync plaidServiceConfig.HttpClient url (requestBody.JsonValue.ToString())
+      let (response: HttpResponseMessage, content) =
+        PostJson.sync plaidServiceConfig.HttpClient url (requestBody.JsonValue.ToString())
 
-            if not response.IsSuccessStatusCode then
-              let parsedError = DetailedError.Parse content
-              let errorCode = errorCodeFromString parsedError.ErrorCode
-              Error (PlaidError (errorCode, parsedError))
-            else
-              let parsedContent = PlaidTokenExchangeResponseBody.Parse content
-              Ok (parsedContent.AccessToken, parsedContent.ItemId)
-
-    // let body = PlaidTokenExchangeBody
-    //     ( plaidServiceConfig.ClientId,
-    //       plaidServiceConfig.Secret,
-    //       publicToken )
-
-    // body.JsonValue.Request "https://sandbox.plaid.com/item/public_token/exchange"
+      if not response.IsSuccessStatusCode then
+        let parsedError = DetailedError.Parse content
+        let errorCode = errorCodeFromString parsedError.ErrorCode
+        Error (PlaidError (errorCode, parsedError))
+      else
+        let parsedContent = PlaidTokenExchangeResponseBody.Parse content
+        Ok (parsedContent.AccessToken, parsedContent.ItemId)
