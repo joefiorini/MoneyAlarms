@@ -1,3 +1,6 @@
 FSharp.Core
 Expecto
 Scotch
+FSharp.Data
+group Testing
+DotEnvFile

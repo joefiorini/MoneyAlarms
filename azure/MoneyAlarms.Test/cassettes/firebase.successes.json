@@ -1,0 +1,55 @@
+[
+  {
+    "request": {
+      "method": "POST",
+      "uri": "https://moneyalarms.firebaseio.com/users/5Hu5khcyxmgmOTMMm1AzlcyDClC2/accounts.json?access_token=ya29.EltwBLZDfJmt66Uji6ckPEBfcmXrkEE7JXlyTzt8Bt_gqPqHEtCxQbj2KGa36x2DeCF2ODJ_Y17aiICSGkMFrLXfWE2f8zp_a7-UgRCnk56NVeoNOcWqJjtibQfp",
+      "requestHeaders": [],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json"
+        },
+        {
+          "Content-Length": "99"
+        }
+      ],
+      "body": "{\n  \"user_id\": \"5Hu5khcyxmgmOTMMm1AzlcyDClC2\",\n  \"account_id\": \"12346\",\n  \"access_token\": \"token\"\n}"
+    },
+    "response": {
+      "status": {
+        "code": "200",
+        "message": "OK"
+      },
+      "responseHeaders": [
+        {
+          "Server": "nginx"
+        },
+        {
+          "Date": "Wed, 21 Jun 2017 16:20:13 GMT"
+        },
+        {
+          "Connection": "keep-alive"
+        },
+        {
+          "Access-Control-Allow-Origin": "*"
+        },
+        {
+          "Cache-Control": "no-cache"
+        },
+        {
+          "Strict-Transport-Security": "max-age=31556926; includeSubDomains; preload"
+        }
+      ],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        {
+          "Content-Length": "31"
+        }
+      ],
+      "body": "{\"name\":\"-KnAS3Hjp0dMLSZXbJBT\"}",
+      "httpVersion": "1.1"
+    },
+    "recordedAt": "2017-06-21T12:20:13.735-04:00"
+  }
+]

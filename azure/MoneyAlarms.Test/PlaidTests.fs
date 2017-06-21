@@ -40,7 +40,7 @@ let tests =
         // to parse it
         match result with
           | Error (PlaidError (InvalidPublicToken, e)) ->
-            Expect.equal e.ErrorType "INVALID_INPUT"
+            Expect.equal e.ErrorType "INVALID_INPUT" "ErrorType"
           | Error e -> Tests.failtest "Got unexpected error type %O"
 
         Expect.isError result "Result is error"

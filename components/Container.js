@@ -65,6 +65,7 @@ class Container extends React.Component {
   render() {
     console.log(firebase.auth().currentUser);
     if (firebase.auth().currentUser) {
+      console.log('ID Token: ', firebase.auth().currentUser.getIdToken());
       setTimeout(this.navigateToAccounts.bind(this));
     }
 

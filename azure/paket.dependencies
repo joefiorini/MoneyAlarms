@@ -1,16 +1,14 @@
 source https://www.nuget.org/api/v2
-nuget DotEnvFile
 nuget Expecto
 nuget FAKE
 nuget FSharp.Core
+nuget FSharp.Data
+nuget Google.Apis.Auth
 nuget Scotch
 
 group Testing
   source https://www.nuget.org/api/v2
+nuget DotEnvFile
   nuget Expecto
   nuget Expecto.BenchmarkDotNet
   nuget Expecto.FsCheck
-
-group Runtime
-  source https://www.nuget.org/api/v2
-  nuget FSharp.Data
