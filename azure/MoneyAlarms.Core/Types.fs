@@ -21,3 +21,13 @@ type MoneyAlarmsError =
     | PlaidError of Plaid.PlaidError
     | FirebaseError of Firebase.FirebaseError
     | ExchangeTokenError of string
+
+type Account =
+    { AccountId: string
+      Name: string
+      OfficialName: string
+      Mask: string
+      Type: string
+      SubType: string
+      InstitutionName: string
+    }

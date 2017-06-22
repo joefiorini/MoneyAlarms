@@ -21,6 +21,30 @@ type PlaidServiceConfig =
       Host: PlaidHost
     }
 
+(*
+Exchange Tokens
+  input: publicToken
+  output: accessToken, itemId
+Get item:
+  input: accessToken
+  output: itemDto list
+Get institution:
+  input: InstitutionId
+  output: InstitutionDto
+
+ItemDto:
+  - AccountId
+  - Name
+  - OfficialName
+  - Mask
+  - Type
+  - SubType
+  - InstitutionId
+
+InstitutionDto:
+  - name
+  -
+*)
 // Configuration
 type PlaidServiceEndpoint<'t> = PlaidServiceConfig -> 't
 type ConfigurePlaidService = PlaidClientId -> PlaidSecret -> PlaidHost -> HttpClient -> PlaidServiceConfig

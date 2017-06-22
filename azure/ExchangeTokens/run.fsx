@@ -48,7 +48,7 @@ let Run(req: HttpRequestMessage, log: TraceWriter) =
               Firebase.SaveAccount.firebaseCreateAccount firebaseConfig
 
         let exchangeResult =
-            ExchangeTokens.createAccount
+            Commands.CreateAccount.run
               plaidExchangeToken
               firebaseCreateAccount
               dto

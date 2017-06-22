@@ -18,6 +18,17 @@ type FirebaseServiceConfig =
       HttpClient: HttpClient
     }
 
+(*
+   AccountDto:
+     - FirebaseUserId
+     - PlaidAccountId
+     - Name
+     - OfficialName
+     - Mask
+     - Type
+     - SubType
+     - InstitutionName
+*)
 type FirebaseAccount =
     { UserId: FirebaseUserId
       ItemAccessToken: ItemAccessToken

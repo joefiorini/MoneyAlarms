@@ -45,8 +45,7 @@
     <Compile Include="Firebase.fs" />
     <Compile Include="Plaid.fs" />
     <Compile Include="Types.fs" />
-    <Compile Include="ExchangeTokens.fs" />
-    <Content Include="ServiceAccountCert.p7b" />
+    <Compile Include="Commands.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Choose>

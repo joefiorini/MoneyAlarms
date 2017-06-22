@@ -41,7 +41,7 @@ let tests =
           FirebaseUserId = "UserId"
         }
       let account =
-        ExchangeTokens.createAccount
+        Commands.CreateAccount.run
           plaidExchangeToken
           firebaseCreateAccount
           dto
@@ -67,7 +67,7 @@ let tests =
         Firebase.FirebaseError "Firebase Error" |> Error
 
       let result =
-        ExchangeTokens.createAccount
+        Commands.CreateAccount.run
           plaidExchangeToken
           firebaseCreateAccount
           dto
@@ -92,7 +92,7 @@ let tests =
         Firebase.FirebaseError "Firebase Error" |> Error
 
       let result =
-        ExchangeTokens.createAccount
+        Commands.CreateAccount.run
           plaidExchangeToken
           firebaseCreateAccount
           dto
