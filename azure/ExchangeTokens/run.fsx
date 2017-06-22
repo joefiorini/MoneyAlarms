@@ -10,10 +10,7 @@ open System.Net.Http
 open Newtonsoft.Json
 open MoneyAlarms.Core
 open FSharp.Data
-
-type Result<'Ok,'Error> =
-    | Ok of 'Ok
-    | Error of 'Error
+open FSharp.Extensions
 
 let Run(req: HttpRequestMessage, log: TraceWriter) =
     async {

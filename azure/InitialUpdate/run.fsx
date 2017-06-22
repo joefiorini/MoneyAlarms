@@ -12,10 +12,6 @@ type Named = {
 
 let Run(req: HttpRequestMessage, log: TraceWriter) =
     async {
-        let blah = Ok "Doo"
-        match blah with
-        | Ok s -> log.Info s
-        | Error s -> log.Error s
         log.Info(sprintf
             "F# HTTP trigger function processed a request.")
 
