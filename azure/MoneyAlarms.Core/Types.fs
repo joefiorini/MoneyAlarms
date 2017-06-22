@@ -31,3 +31,9 @@ type Account =
       SubType: string
       InstitutionName: string
     }
+
+type PlaidItem =
+    { ItemId: string
+      Webhook: string
+      InstitutionId: string
+    }

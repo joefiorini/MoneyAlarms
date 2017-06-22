@@ -26,33 +26,62 @@ let expectError actualR expected msg =
         Expect.equal s expected msg
   ()
 
+let plaidExchangeToken publicToken =
+    Ok "AccessToken"
+
+let plaidGetAccounts accessToken =
+    Ok <| Plaid.Accounts.AccountsJson.GetSample()
+
+let plaidGetInstitutionName institutionId =
+    Expect.equal institutionId
+        <| Plaid.Accounts.AccountsJson.GetSample().Item.InstitutionId
+        <| "Institution Ids"
+    Ok "Chase"
+
+let firebasePersistAccountsAndItem account =
+    Ok <| ignore account
+
+let addItem userId item =
+    Ok item
+
 [<Tests>]
 let tests =
   testList "ExchangeTokens" [
     testCase "Returns account on success" <| fun _ ->
-      let plaidExchangeToken publicToken =
-        Ok ("AccessToken", "AccountId")
-
-      let firebaseCreateAccount account =
-        Ok account
-
       let dto: TokenExchangeDto =
         { PlaidPublicToken = "PublicToken"
           FirebaseUserId = "UserId"
         }
-      let account =
+
+      let accounts =
         Commands.CreateAccount.run
           plaidExchangeToken
-          firebaseCreateAccount
+          plaidGetAccounts
+          plaidGetInstitutionName
+          firebasePersistAccountsAndItem
+          addItem
           dto
 
       let expected =
-        { ItemAccessToken = "AccessToken"
-          AccountId = "AccountId"
-          UserId = "UserId"
-        }
+        [ { AccountId = "ekvG5RD76BCWRRw1eJ8vhdQrK7DdoLSLDbnva"
+            Name = "Plaid Checking"
+            OfficialName = "Plaid Gold Standard 0% Interest Checking"
+            Mask = "0000"
+            Type = "depository"
+            SubType = "checking"
+            InstitutionName = "Chase"
+          }
+          { AccountId = "Q4Jd5RAvzLsW44wNKva9h9R3Pvd9yzSpogAP3"
+            Name = "Plaid Saving"
+            OfficialName = "Plaid Silver Standard 0.1% Interest Saving"
+            Mask = "1111"
+            Type = "depository"
+            SubType = "savings"
+            InstitutionName = "Chase"
+          }
+        ]
 
-      expectResult account expected "Expected account to be equal"
+      expectResult (Result.map Array.toList accounts) (expected) "Expected account to be equal"
 
     testCase "Returns error when plaid fails" <| fun _ ->
       let dto =
@@ -63,13 +92,13 @@ let tests =
       let plaidExchangeToken publicToken =
         Plaid.PlaidError (UnknownError, exampleError) |> Error
 
-      let firebaseCreateAccount account =
-        Firebase.FirebaseError "Firebase Error" |> Error
-
       let result =
         Commands.CreateAccount.run
           plaidExchangeToken
-          firebaseCreateAccount
+          plaidGetAccounts
+          plaidGetInstitutionName
+          firebasePersistAccountsAndItem
+          addItem
           dto
 
       match result with
@@ -85,16 +114,16 @@ let tests =
           FirebaseUserId = ""
         }
 
-      let plaidExchangeToken publicToken =
-        Ok ("AccessToken", "AccountId")
-
       let firebaseCreateAccount account =
         Firebase.FirebaseError "Firebase Error" |> Error
 
       let result =
         Commands.CreateAccount.run
           plaidExchangeToken
-          firebaseCreateAccount
+          plaidGetAccounts
+          plaidGetInstitutionName
+          firebasePersistAccountsAndItem
+          addItem
           dto
 
       expectError result "Firebase Error" "Not a firebase error"

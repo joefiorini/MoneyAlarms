@@ -6,7 +6,7 @@ open Firebase
 open Firebase.SaveAccount
 open ScotchSetup
 
-let accessToken = "ya29.EltwBLZDfJmt66Uji6ckPEBfcmXrkEE7JXlyTzt8Bt_gqPqHEtCxQbj2KGa36x2DeCF2ODJ_Y17aiICSGkMFrLXfWE2f8zp_a7-UgRCnk56NVeoNOcWqJjtibQfp"
+let accessToken = "ya29.Elt2BNYAMen4A1Rp-aC5A4gZSL-guGoXHrUst2XXc4u9x-_JnOpkTe81tg0XMy27vPxFSzXanqEEi7I_7dqPD82Vg9pTGuUfI1qI2rUJDpdvyw0PWR4OmuRb2zKr"
 
 [<Tests>]
 let tests =
@@ -14,19 +14,22 @@ let tests =
     [ testCase "returns the created account" <| fun _ ->
         let httpClient = httpClientForCassette "firebase.successes.json"
         let serviceConfig = ServiceConfig.fromEnvironment httpClient accessToken
-        let testAccount =
-          { UserId = "5Hu5khcyxmgmOTMMm1AzlcyDClC2"
-            ItemAccessToken = "token"
-            AccountId = "12346"
-          }
+        let testAccount = AccountJson.GetSample()
 
-        let result = firebaseCreateAccount serviceConfig testAccount
-
-        match result with
-          | Ok v ->
-             Expect.equal v testAccount "Account is correct"
-          | Error e ->
-             printfn "Unexpected error: %A" e
+        let result = run serviceConfig testAccount
 
         Expect.isOk result "Ok result"
+
+      testCase "gets the account when it exists" <| fun _ ->
+        // let firebaseToken = Firebase.AccessToken.generate()
+        // printfn "%A" firebaseToken
+        let httpClient = httpClientForCassette "firebase.successes.json"
+        let serviceConfig = ServiceConfig.fromEnvironment httpClient accessToken
+        let testAccount = AccountJson.GetSample()
+        let getAccount = getAccountByAccountId serviceConfig
+        let accountId = "-KnblGYOWOtYDRq0WR1x"
+
+        match getAccount testAccount.FirebaseUserId accountId with
+          | Ok o -> Expect.isTrue (Option.isSome o) "Account exists"
+          | Error e -> Tests.failtestf "Expected account to exist, got error %A" e
     ]

@@ -1,18 +1,11 @@
 [
   {
     "request": {
-      "method": "POST",
-      "uri": "https://moneyalarms.firebaseio.com/users/5Hu5khcyxmgmOTMMm1AzlcyDClC2/accounts.json?access_token=ya29.EltwBLZDfJmt66Uji6ckPEBfcmXrkEE7JXlyTzt8Bt_gqPqHEtCxQbj2KGa36x2DeCF2ODJ_Y17aiICSGkMFrLXfWE2f8zp_a7-UgRCnk56NVeoNOcWqJjtibQfp",
+      "method": "GET",
+      "uri": "https://moneyalarms.firebaseio.com/users/5Hu5khcyxmgmOTMMm1AzlcyDClC2/accounts/y4W8N4pk4ET5nNbAqZM6HaEPoDGRVLioJW1Jw.json?access_token=ya29.Elt2BNYAMen4A1Rp-aC5A4gZSL-guGoXHrUst2XXc4u9x-_JnOpkTe81tg0XMy27vPxFSzXanqEEi7I_7dqPD82Vg9pTGuUfI1qI2rUJDpdvyw0PWR4OmuRb2zKr",
       "requestHeaders": [],
-      "contentHeaders": [
-        {
-          "Content-Type": "application/json"
-        },
-        {
-          "Content-Length": "99"
-        }
-      ],
-      "body": "{\n  \"user_id\": \"5Hu5khcyxmgmOTMMm1AzlcyDClC2\",\n  \"account_id\": \"12346\",\n  \"access_token\": \"token\"\n}"
+      "contentHeaders": [],
+      "body": ""
     },
     "response": {
       "status": {
@@ -24,7 +17,60 @@
           "Server": "nginx"
         },
         {
-          "Date": "Wed, 21 Jun 2017 16:20:13 GMT"
+          "Date": "Tue, 27 Jun 2017 04:19:42 GMT"
+        },
+        {
+          "Connection": "keep-alive"
+        },
+        {
+          "Access-Control-Allow-Origin": "*"
+        },
+        {
+          "Cache-Control": "no-cache"
+        },
+        {
+          "Strict-Transport-Security": "max-age=31556926; includeSubDomains; preload"
+        }
+      ],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        {
+          "Content-Length": "4"
+        }
+      ],
+      "body": "null",
+      "httpVersion": "1.1"
+    },
+    "recordedAt": "2017-06-27T00:19:42.497-04:00"
+  },
+  {
+    "request": {
+      "method": "POST",
+      "uri": "https://moneyalarms.firebaseio.com/users/5Hu5khcyxmgmOTMMm1AzlcyDClC2/accounts.json?access_token=ya29.Elt2BNYAMen4A1Rp-aC5A4gZSL-guGoXHrUst2XXc4u9x-_JnOpkTe81tg0XMy27vPxFSzXanqEEi7I_7dqPD82Vg9pTGuUfI1qI2rUJDpdvyw0PWR4OmuRb2zKr",
+      "requestHeaders": [],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json"
+        },
+        {
+          "Content-Length": "353"
+        }
+      ],
+      "body": "{\n  \"firebase_user_id\": \"5Hu5khcyxmgmOTMMm1AzlcyDClC2\",\n  \"plaid_account_id\": \"y4W8N4pk4ET5nNbAqZM6HaEPoDGRVLioJW1Jw\",\n  \"plaid_access_token\": \"access-sandbox-265c9150-193c-4b8e-a6c2-189411592c7e\",\n  \"name\": \"Plaid Checking\",\n  \"official_name\": \"Plaid Gold Checking\",\n  \"subtype\": \"checking\",\n  \"mask\": \"aaaa\",\n  \"institution_name\": \"Houndstooth Bank\"\n}"
+    },
+    "response": {
+      "status": {
+        "code": "200",
+        "message": "OK"
+      },
+      "responseHeaders": [
+        {
+          "Server": "nginx"
+        },
+        {
+          "Date": "Tue, 27 Jun 2017 04:19:42 GMT"
         },
         {
           "Connection": "keep-alive"
@@ -47,9 +93,101 @@
           "Content-Length": "31"
         }
       ],
-      "body": "{\"name\":\"-KnAS3Hjp0dMLSZXbJBT\"}",
+      "body": "{\"name\":\"-KnblgM1SgkxzAHMcsxj\"}",
       "httpVersion": "1.1"
     },
-    "recordedAt": "2017-06-21T12:20:13.735-04:00"
+    "recordedAt": "2017-06-27T00:19:42.705-04:00"
+  },
+  {
+    "request": {
+      "method": "GET",
+      "uri": "https://moneyalarms.firebaseio.com/users/5Hu5khcyxmgmOTMMm1AzlcyDClC2/accounts/5Hu5khcyxmgmOTMMm1AzlcyDClC2.json?access_token=ya29.Elt2BNYAMen4A1Rp-aC5A4gZSL-guGoXHrUst2XXc4u9x-_JnOpkTe81tg0XMy27vPxFSzXanqEEi7I_7dqPD82Vg9pTGuUfI1qI2rUJDpdvyw0PWR4OmuRb2zKr",
+      "requestHeaders": [],
+      "contentHeaders": [],
+      "body": ""
+    },
+    "response": {
+      "status": {
+        "code": "200",
+        "message": "OK"
+      },
+      "responseHeaders": [
+        {
+          "Server": "nginx"
+        },
+        {
+          "Date": "Tue, 27 Jun 2017 04:20:22 GMT"
+        },
+        {
+          "Connection": "keep-alive"
+        },
+        {
+          "Access-Control-Allow-Origin": "*"
+        },
+        {
+          "Cache-Control": "no-cache"
+        },
+        {
+          "Strict-Transport-Security": "max-age=31556926; includeSubDomains; preload"
+        }
+      ],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        {
+          "Content-Length": "4"
+        }
+      ],
+      "body": "null",
+      "httpVersion": "1.1"
+    },
+    "recordedAt": "2017-06-27T00:20:22.253-04:00"
+  },
+  {
+    "request": {
+      "method": "GET",
+      "uri": "https://moneyalarms.firebaseio.com/users/5Hu5khcyxmgmOTMMm1AzlcyDClC2/accounts/-KnblGYOWOtYDRq0WR1x.json?access_token=ya29.Elt2BNYAMen4A1Rp-aC5A4gZSL-guGoXHrUst2XXc4u9x-_JnOpkTe81tg0XMy27vPxFSzXanqEEi7I_7dqPD82Vg9pTGuUfI1qI2rUJDpdvyw0PWR4OmuRb2zKr",
+      "requestHeaders": [],
+      "contentHeaders": [],
+      "body": ""
+    },
+    "response": {
+      "status": {
+        "code": "200",
+        "message": "OK"
+      },
+      "responseHeaders": [
+        {
+          "Server": "nginx"
+        },
+        {
+          "Date": "Tue, 27 Jun 2017 04:22:15 GMT"
+        },
+        {
+          "Connection": "keep-alive"
+        },
+        {
+          "Access-Control-Allow-Origin": "*"
+        },
+        {
+          "Cache-Control": "no-cache"
+        },
+        {
+          "Strict-Transport-Security": "max-age=31556926; includeSubDomains; preload"
+        }
+      ],
+      "contentHeaders": [
+        {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        {
+          "Content-Length": "320"
+        }
+      ],
+      "body": "{\"firebase_user_id\":\"5Hu5khcyxmgmOTMMm1AzlcyDClC2\",\"institution_name\":\"Houndstooth Bank\",\"mask\":\"aaaa\",\"name\":\"Plaid Checking\",\"official_name\":\"Plaid Gold Checking\",\"plaid_access_token\":\"access-sandbox-265c9150-193c-4b8e-a6c2-189411592c7e\",\"plaid_account_id\":\"y4W8N4pk4ET5nNbAqZM6HaEPoDGRVLioJW1Jw\",\"subtype\":\"checking\"}",
+      "httpVersion": "1.1"
+    },
+    "recordedAt": "2017-06-27T00:22:15.918-04:00"
   }
 ]

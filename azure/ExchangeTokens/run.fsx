@@ -37,6 +37,8 @@ let Run(req: HttpRequestMessage, log: TraceWriter) =
         let plaidConfig = Plaid.ServiceConfig.fromEnvironment httpClient
         log.Info(sprintf "Got plaid config: %A" plaidConfig)
         let plaidExchangeToken = Plaid.plaidExchangeToken plaidConfig
+        let plaidGetAccounts = Plaid.Accounts.Get.run plaidConfig
+        let plaidGetInstitutionName = Plaid.Institutions.getName plaidConfig
 
         let firebaseToken = Firebase.AccessToken.generate()
         log.Info(sprintf "Got firebaseToken: %A" firebaseToken)
@@ -45,12 +47,16 @@ let Run(req: HttpRequestMessage, log: TraceWriter) =
 
         log.Info(sprintf "Got firebase config: %A" firebaseConfig)
         let firebaseCreateAccount =
-              Firebase.SaveAccount.firebaseCreateAccount firebaseConfig
+              Firebase.SaveAccount.run firebaseConfig
+        let firebaseAddItem = Firebase.AddItem.run firebaseConfig
 
         let exchangeResult =
             Commands.CreateAccount.run
               plaidExchangeToken
+              plaidGetAccounts
+              plaidGetInstitutionName
               firebaseCreateAccount
+              firebaseAddItem
               dto
 
         log.Info(sprintf "Got exchangeResult: %A" exchangeResult)

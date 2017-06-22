@@ -1,6 +1,9 @@
 namespace Firebase
 
+open FSharp.Data
 open FSharp.Extensions
+open HttpUtils
+open System
 open System.Net.Http
 
 type FirebaseUserId = string
@@ -18,17 +21,6 @@ type FirebaseServiceConfig =
       HttpClient: HttpClient
     }
 
-(*
-   AccountDto:
-     - FirebaseUserId
-     - PlaidAccountId
-     - Name
-     - OfficialName
-     - Mask
-     - Type
-     - SubType
-     - InstitutionName
-*)
 type FirebaseAccount =
     { UserId: FirebaseUserId
       ItemAccessToken: ItemAccessToken
@@ -57,7 +49,6 @@ module AccessToken =
       async {
         let privateKey =
           Environment.GetEnvironmentVariable("FIREBASE_ADMIN_PRIVATE_KEY").Replace("\\n", Environment.NewLine)
-        printfn "Private Key: %s" privateKey
         let initializer = new ServiceAccountCredential.Initializer(serviceAccountEmail)
         initializer.Scopes <- ["https://www.googleapis.com/auth/userinfo.email"; "https://www.googleapis.com/auth/firebase.database"]
         let credential = new ServiceAccountCredential(initializer.FromPrivateKey(privateKey))
@@ -107,10 +98,34 @@ module ServiceConfig =
   let internal makeDatabaseUrl config s = config.DatabaseUrl + s + "?access_token=" + config.UserToken
 
 module SaveAccount =
+(*
+   AccountDto:
+    - FirebaseUserId
+    - PlaidAccountId
+    - PlaidAccessToken
+    - Name
+    - OfficialName
+    - Mask
+    - Type
+    - SubType
+    - InstitutionName
+*)
 
-  open FSharp.Data
-  open HttpUtils
-  open System
+  [<Literal>]
+  let accountDtoSample = """
+      {
+          "firebase_user_id": "5Hu5khcyxmgmOTMMm1AzlcyDClC2",
+          "plaid_account_id": "y4W8N4pk4ET5nNbAqZM6HaEPoDGRVLioJW1Jw",
+          "plaid_access_token": "access-sandbox-265c9150-193c-4b8e-a6c2-189411592c7e",
+          "name": "Plaid Checking",
+          "official_name": "Plaid Gold Checking",
+          "subtype": "checking",
+          "mask": "aaaa",
+          "institution_name": "Houndstooth Bank"
+      }
+  """
+  type AccountJson = JsonProvider<accountDtoSample>
+  type AccountDto = AccountJson.Root
 
   [<Literal>]
   let createAccountBodySample = """
@@ -121,6 +136,64 @@ module SaveAccount =
       }
   """
   type CreateAccountRequestBody = JsonProvider<createAccountBodySample>
+
+  type GetAccountByAccountId = FirebaseUserId -> string -> Result<Option<string>, FirebaseError>
+  let getAccountByAccountId: FirebaseServiceEndpoint<GetAccountByAccountId> =
+      fun serviceConfig userId accountId ->
+          let url =
+              [ "/users"
+                userId
+                "accounts"
+                (accountId + ".json")
+              ] |> String.concat "/"
+
+          let (response: HttpResponseMessage, content) =
+              ServiceConfig.makeDatabaseUrl serviceConfig url
+                  |> GetJson.sync serviceConfig.HttpClient
+          if not response.IsSuccessStatusCode then
+              Error (FirebaseError content)
+          else
+              printfn "%A" content
+              if content = "null" then
+                Ok <| None
+              else
+                Ok <| Some(content)
+  // map : ('T -> 'U) -> Result<'T, 'TError> -> Result<'U, 'TError>
+  // map : ('T -> 'U) -> Option<'T> -> Option<'U>
+
+  type SaveAccount = AccountDto -> string option -> Result<unit, FirebaseError>
+  let saveAccount: FirebaseServiceEndpoint<SaveAccount> =
+      fun serviceConfig account accountO ->
+          if Option.isNone accountO then
+              let (response: HttpResponseMessage, content) =
+                  ( ServiceConfig.makeDatabaseUrl serviceConfig ("/users/" + account.FirebaseUserId  +  "/accounts.json"),
+                      account.JsonValue.ToString()
+                  )
+                      ||> PostJson.sync serviceConfig.HttpClient
+              if not response.IsSuccessStatusCode then
+                  Error (FirebaseError content)
+              else
+                  Ok ()
+          else
+              Ok ()
+
+  type Run = AccountDto -> Result<unit,FirebaseError>
+  let run: FirebaseServiceEndpoint<Run> =
+    fun serviceConfig account ->
+        // Get accounts for current user by AccountId
+        // If exists, return the account
+        // If doesn't exist, create the account and return it
+        getAccountByAccountId serviceConfig account.FirebaseUserId account.PlaidAccountId
+          |> Result.bind (saveAccount serviceConfig account)
+        // let (response: HttpResponseMessage, content) =
+        //     ( ServiceConfig.makeDatabaseUrl serviceConfig ("/users/" + account.FirebaseUserId  +  "/accounts.json"),
+        //         account.JsonValue.ToString()
+        //     )
+        //         ||> PostJson.sync serviceConfig.HttpClient
+        // if not response.IsSuccessStatusCode then
+        //     Error (FirebaseError content)
+        // else
+        //     Ok account
 
   let firebaseCreateAccount: FirebaseServiceEndpoint<CreateAccount> =
       fun serviceConfig account ->
@@ -140,3 +213,29 @@ module SaveAccount =
           Error (FirebaseError content)
         else
           Ok account
+
+module AddItem =
+    [<Literal>]
+    let plaidItemDtoSample = """
+        {
+            "institution_id": "ins_3",
+            "item_id": "KznK5LWGR7UMBBJPXzRQUyRxylgQlPHeLxnLzM",
+            "webhook": "https://requestb.in/s6e29ss6"
+        }
+    """
+    type PlaidItemJson = JsonProvider<plaidItemDtoSample>
+    type PlaidItemDto = PlaidItemJson.Root
+
+    type Run = FirebaseUserId -> PlaidItemDto -> Result<PlaidItemDto, FirebaseError>
+    let run: FirebaseServiceEndpoint<Run> =
+        fun serviceConfig userId itemDto ->
+            let (response: HttpResponseMessage, content) =
+                ( ServiceConfig.makeDatabaseUrl serviceConfig ("/users/" + userId  +  "/plaidItems.json"),
+                    itemDto.JsonValue.ToString()
+                )
+                    ||> PostJson.sync serviceConfig.HttpClient
+            if not response.IsSuccessStatusCode then
+                Error (FirebaseError content)
+            else
+
+                Ok itemDto
