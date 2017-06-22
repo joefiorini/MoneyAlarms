@@ -7,7 +7,6 @@ Debug
 *.suo
 *.user
 obj
-bin
 
 
 ### Linux ###

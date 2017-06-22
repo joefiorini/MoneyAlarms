@@ -57,9 +57,10 @@ module AccessToken =
             return ""
       } |> Async.RunSynchronously
 
- module ServiceConfig =
+module ServiceConfig =
 
   open System
+  open System.Net.Http
 
   type Create = string -> string -> string -> string -> string -> string -> string -> HttpClient -> FirebaseServiceConfig
 
@@ -78,7 +79,9 @@ module AccessToken =
   let private (<~) fn s =
       Environment.GetEnvironmentVariable s |> fn
 
-  let fromEnvironment httpClient accessToken =
+  type FromEnvironment = HttpClient -> string -> FirebaseServiceConfig
+  let fromEnvironment: FromEnvironment =
+      fun httpClient accessToken ->
         createConfig
           <~ "FIREBASE_API_KEY"
           <~ "FIREBASE_AUTH_DOMAIN"
@@ -91,7 +94,7 @@ module AccessToken =
 
   let internal makeDatabaseUrl config s = config.DatabaseUrl + s + "?access_token=" + config.UserToken
 
-module CreateAccount =
+module SaveAccount =
 
   open FSharp.Data
   open HttpUtils

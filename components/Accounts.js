@@ -16,53 +16,52 @@ class Accounts extends React.Component {
     if (e.action.match(/::connected/)) {
       // TODO: Get currentUser into store
       const response = await fetch(
-        'https://sandbox.plaid.com/item/public_token/exchange',
+        'https://moneyalarms.azurewebsites.net/api/ExchangeTokens?code=Wykh0ruO61aXcfwGPZTxzatuhxpmTJU3SdzDtspwxw2zN7MkALA/rQ==',
         {
           method: 'POST',
           headers: {
             'content-type': 'application/json',
           },
           body: JSON.stringify({
-            client_id: Config.PLAID_CLIENT_ID,
-            secret: Config.PLAID_SECRET,
-            public_token: e.metadata.public_token,
+            plaid_public_token: e.metadata.public_token,
+            firebase_user_id: firebase.auth().currentUser.uid,
           }),
         }
       );
 
-      if (response.status >= 400) {
-        console.log(response);
-        console.error(`${response.status} trying to exchange plaid token`);
-      }
+      // if (response.status >= 400) {
+      //   console.log(response);
+      //   console.error(`${response.status} trying to exchange plaid token`);
+      // }
 
-      let accessToken;
+      // let accessToken;
 
-      try {
-        ({ access_token: accessToken } = await response.json());
-      } catch (e) {
-        console.log(response);
-        console.error(
-          'Error parsing json body from plaid exchange token endpoint'
-        );
-      }
+      // try {
+      //   ({ access_token: accessToken } = await response.json());
+      // } catch (e) {
+      //   console.log(response);
+      //   console.error(
+      //     'Error parsing json body from plaid exchange token endpoint'
+      //   );
+      // }
 
-      if (!accessToken) {
-        console.log(response);
-        console.error('Plaid token exchange failed for unknown reason');
-      }
+      // if (!accessToken) {
+      //   console.log(response);
+      //   console.error('Plaid token exchange failed for unknown reason');
+      // }
 
-      const currentUser = firebase.auth().currentUser;
-      const plaidItemsRef = firebase
-        .database()
-        .ref(`users/${currentUser.uid}/plaidItems`)
-        .push();
+      // const currentUser = firebase.auth().currentUser;
+      // const plaidItemsRef = firebase
+      //   .database()
+      //   .ref(`users/${currentUser.uid}/plaidItems`)
+      //   .push();
 
-      const account = {
-        accountId: e.metadata.account_id,
-        accessToken: accessToken,
-      };
+      // const account = {
+      //   accountId: e.metadata.account_id,
+      //   accessToken: accessToken,
+      // };
 
-      plaidItemsRef.set(account);
+      // plaidItemsRef.set(account);
     }
   }
   render() {

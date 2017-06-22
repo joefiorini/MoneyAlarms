@@ -22,7 +22,7 @@ type PlaidServiceConfig =
 
 // Configuration
 type PlaidServiceEndpoint<'t> = PlaidServiceConfig -> 't
-type ConfigurePlaidService = HttpClient -> PlaidClientId -> PlaidSecret -> PlaidHost -> PlaidServiceConfig
+type ConfigurePlaidService = PlaidClientId -> PlaidSecret -> PlaidHost -> HttpClient -> PlaidServiceConfig
 
 [<Literal>]
 let tokenExchangeSample = """
@@ -142,13 +142,24 @@ let errorCodeFromString =
 // Endpoints
 type ExchangeToken = PlaidPublicToken -> Result<PlaidAccessToken * PlaidItemId, PlaidError>
 
-let configurePlaidService: ConfigurePlaidService =
-    fun httpClient clientId secret host ->
-      { HttpClient = httpClient
-        ClientId = clientId
-        Secret = secret
-        Host = host
-      }
+module ServiceConfig =
+    let private (<~) fn s =
+        Environment.GetEnvironmentVariable s |> fn
+
+    let create: ConfigurePlaidService =
+        fun clientId secret host httpClient ->
+            { HttpClient = httpClient
+              ClientId = clientId
+              Secret = secret
+              Host = host
+            }
+
+    let fromEnvironment httpClient =
+      create
+          <~ "PLAID_CLIENT_ID"
+          <~ "PLAID_SECRET"
+          <~ "PLAID_HOST"
+          <| httpClient
 
 let plaidExchangeToken: PlaidServiceEndpoint<ExchangeToken> =
     fun plaidServiceConfig publicToken ->
