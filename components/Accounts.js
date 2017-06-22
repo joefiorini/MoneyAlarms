@@ -10,6 +10,10 @@ import Config from '../config';
 import MessageWebView from './MessageWebView';
 import * as firebase from 'firebase';
 
+const logValue = e => {
+  console.log(e);
+  return e;
+};
 class Accounts extends React.Component {
   async onMessage(e) {
     console.log('got message', e);
@@ -22,10 +26,12 @@ class Accounts extends React.Component {
           headers: {
             'content-type': 'application/json',
           },
-          body: JSON.stringify({
-            plaid_public_token: e.metadata.public_token,
-            firebase_user_id: firebase.auth().currentUser.uid,
-          }),
+          body: logValue(
+            JSON.stringify({
+              plaid_public_token: e.metadata.public_token,
+              firebase_user_id: firebase.auth().currentUser.uid,
+            })
+          ),
         }
       );
 
