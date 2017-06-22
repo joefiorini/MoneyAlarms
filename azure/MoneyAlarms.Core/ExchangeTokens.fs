@@ -35,5 +35,6 @@ let createAccount: CreateAccount =
     fun plaidExchangeToken firebaseCreateAccount dto ->
       plaidExchangeToken dto.PlaidPublicToken
         |> mapDomainError
+        // TODO: Get the account name, official name, type, subtype from plaid
         |*> makeAccount dto.FirebaseUserId
         |> bindDomainError firebaseCreateAccount
