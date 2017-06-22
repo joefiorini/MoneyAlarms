@@ -4,6 +4,7 @@ open System
 open FSharp.Data
 open System.Net.Http
 open HttpUtils
+open FSharp.Extensions
 
 type PlaidClientId = string
 type PlaidSecret = string

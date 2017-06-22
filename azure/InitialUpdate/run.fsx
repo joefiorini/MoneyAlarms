@@ -5,7 +5,6 @@
 open System.Net
 open System.Net.Http
 open Newtonsoft.Json
-open MoneyAlarms
 
 type Named = {
     name: string
@@ -13,6 +12,10 @@ type Named = {
 
 let Run(req: HttpRequestMessage, log: TraceWriter) =
     async {
+        let blah = Ok "Doo"
+        match blah with
+        | Ok s -> log.Info s
+        | Error s -> log.Error s
         log.Info(sprintf
             "F# HTTP trigger function processed a request.")
 
@@ -23,7 +26,7 @@ let Run(req: HttpRequestMessage, log: TraceWriter) =
 
         match name with
         | Some x ->
-            return req.CreateResponse(HttpStatusCode.OK, Utils.makeGreeting x.Value);
+            return req.CreateResponse(HttpStatusCode.OK, "Hello World");
         | None ->
             let! data = req.Content.ReadAsStringAsync() |> Async.AwaitTask
 

@@ -1,5 +1,6 @@
 namespace Firebase
 
+open FSharp.Extensions
 open System.Net.Http
 
 type FirebaseUserId = string

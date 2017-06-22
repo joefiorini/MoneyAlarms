@@ -3,7 +3,7 @@ module FirebaseTests
 open Expecto
 open System
 open Firebase
-open Firebase.CreateAccount
+open Firebase.SaveAccount
 open ScotchSetup
 
 let accessToken = "ya29.EltwBLZDfJmt66Uji6ckPEBfcmXrkEE7JXlyTzt8Bt_gqPqHEtCxQbj2KGa36x2DeCF2ODJ_Y17aiICSGkMFrLXfWE2f8zp_a7-UgRCnk56NVeoNOcWqJjtibQfp"

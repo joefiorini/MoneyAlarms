@@ -3,6 +3,7 @@ module MoneyAlarms.Core.ExchangeTokens
 open Plaid
 open Firebase
 open Microsoft.FSharp.Reflection
+open FSharp.Extensions
 
 type MakeAccount = FirebaseUserId -> PlaidAccessToken -> AccountId -> FirebaseAccount
 type CreateAccount = Plaid.ExchangeToken -> Firebase.CreateAccount -> TokenExchangeDto -> Result<FirebaseAccount, MoneyAlarmsError>
