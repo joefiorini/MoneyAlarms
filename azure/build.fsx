@@ -42,8 +42,15 @@ Target "Deploy" (fun _ ->
     |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip")
 )
 
+Target "PrepareFunctionsBinsDebug" (fun _ ->
+    let files = seq { for file in (!! (buildDir + "/*.dll")) do yield file }
+    printfn "Copying %A" files
+    for func in azureFunctions do
+        Copy ((DirectoryName func) + "/bin/") files
+)
+
 Target "PrepareFunctionsBins" (fun _ ->
-    let files = seq { for file in (!! (releaseDir + "/*.dll")) do yield file }
+    let files = seq { for file in (!! (releaseDir + "/*.dll") ++ (releaseDir + "/*.dll.mdb")) do yield file }
     printfn "Copying %A" files
     for func in azureFunctions do
         Copy ((DirectoryName func) + "/bin/") files

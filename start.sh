@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-env $(cat .env | xargs) react-native-scripts start
+/usr/bin/env "$(cat .env | xargs)" react-native-scripts start

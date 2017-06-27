@@ -124,8 +124,7 @@ module SaveAccount =
           "institution_name": "Houndstooth Bank"
       }
   """
-  type AccountJson = JsonProvider<accountDtoSample>
-  type AccountDto = AccountJson.Root
+  type AccountDto = JsonProvider<accountDtoSample>
 
   [<Literal>]
   let createAccountBodySample = """
@@ -139,6 +138,8 @@ module SaveAccount =
 
   type GetAccountByAccountId = FirebaseUserId -> string -> Result<Option<string>, FirebaseError>
   let getAccountByAccountId: FirebaseServiceEndpoint<GetAccountByAccountId> =
+      // TODO: This is broken because I need to query by the PlaidAccountId, but this
+      // is looking for a Firebase ID
       fun serviceConfig userId accountId ->
           let url =
               [ "/users"
@@ -161,7 +162,7 @@ module SaveAccount =
   // map : ('T -> 'U) -> Result<'T, 'TError> -> Result<'U, 'TError>
   // map : ('T -> 'U) -> Option<'T> -> Option<'U>
 
-  type SaveAccount = AccountDto -> string option -> Result<unit, FirebaseError>
+  type SaveAccount = AccountDto.Root -> string option -> Result<unit, FirebaseError>
   let saveAccount: FirebaseServiceEndpoint<SaveAccount> =
       fun serviceConfig account accountO ->
           if Option.isNone accountO then
@@ -177,7 +178,7 @@ module SaveAccount =
           else
               Ok ()
 
-  type Run = AccountDto -> Result<unit,FirebaseError>
+  type Run = AccountDto.Root -> Result<unit,FirebaseError>
   let run: FirebaseServiceEndpoint<Run> =
     fun serviceConfig account ->
         // Get accounts for current user by AccountId
@@ -223,10 +224,9 @@ module AddItem =
             "webhook": "https://requestb.in/s6e29ss6"
         }
     """
-    type PlaidItemJson = JsonProvider<plaidItemDtoSample>
-    type PlaidItemDto = PlaidItemJson.Root
+    type PlaidItemDto = JsonProvider<plaidItemDtoSample>
 
-    type Run = FirebaseUserId -> PlaidItemDto -> Result<PlaidItemDto, FirebaseError>
+    type Run = FirebaseUserId -> PlaidItemDto.Root -> Result<PlaidItemDto.Root, FirebaseError>
     let run: FirebaseServiceEndpoint<Run> =
         fun serviceConfig userId itemDto ->
             let (response: HttpResponseMessage, content) =

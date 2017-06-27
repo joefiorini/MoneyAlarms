@@ -56,11 +56,11 @@ module CreateAccount =
 
       (accounts, item)
 
-  type MakeFirebaseDtos = string -> string -> Account [] -> PlaidItem -> Firebase.SaveAccount.AccountDto [] * Firebase.AddItem.PlaidItemDto
+  type MakeFirebaseDtos = string -> string -> Account [] -> PlaidItem -> Firebase.SaveAccount.AccountDto.Root [] * Firebase.AddItem.PlaidItemDto.Root
   let makeFirebaseDtos: MakeFirebaseDtos =
       fun firebaseUserId accessToken accounts item ->
         let makeAccountDto account =
-            Firebase.SaveAccount.AccountDto
+            Firebase.SaveAccount.AccountDto.Root
                 ( firebaseUserId,
                   account.AccountId,
                   account.Name,
@@ -71,7 +71,7 @@ module CreateAccount =
                   account.InstitutionName
                 )
         ( Array.map makeAccountDto accounts,
-          Firebase.AddItem.PlaidItemDto
+          Firebase.AddItem.PlaidItemDto.Root
             ( item.InstitutionId,
               item.ItemId,
               item.Webhook
@@ -87,14 +87,14 @@ module CreateAccount =
 
         Result.map <| tupleUp accountsDto <| institutionNameR
 
-  type Run = Plaid.ExchangeToken -> Plaid.Accounts.Get -> Plaid.Institutions.GetName -> Firebase.SaveAccount.Run -> Firebase.AddItem.Run -> TokenExchangeDto -> Result<Account [], MoneyAlarmsError>
+  type Run = Plaid.ExchangeToken -> Plaid.Accounts.Get -> Plaid.Institutions.GetName -> Firebase.SaveAccount.Run -> Firebase.AddItem.Run -> TokenExchangeDto -> Result<unit, MoneyAlarmsError>
   let run: Run =
       fun plaidExchangeToken plaidGetAccounts plaidGetInstitutionName firebaseCreateAccount firebaseAddItem dto ->
         let accessToken = DomainTypes.mapError <| plaidExchangeToken dto.PlaidPublicToken
         let accountsAndItem =
           accessToken
               |> DomainTypes.bindError plaidGetAccounts
-              |> DomainTypes.bindError (getAccountsWithInstitutionName plaidGetInstitutionName)
+              |> Result.bind (getAccountsWithInstitutionName plaidGetInstitutionName)
               |*> extractAccountsAndItem
 
         Result.bind
@@ -103,8 +103,9 @@ module CreateAccount =
               |*> makeFirebaseDtos dto.FirebaseUserId accessToken
               |> resultTupleBind (fun accounts item ->
                         do
+                          printfn "Saving accounts: %A" accounts
                           Array.map firebaseCreateAccount accounts |> ignore
                           firebaseAddItem dto.FirebaseUserId item
-                        Result.map fst accountsAndItem
+                        Result.map ignore accountsAndItem
                   )
           ) accessToken

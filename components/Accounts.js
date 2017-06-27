@@ -71,8 +71,6 @@ class Accounts extends React.Component {
     }
   }
   render() {
-    console.log(process.env.PLAID_PUBLIC_KEY);
-
     const plaidURL = `https://cdn.plaid.com/link/v2/stable/link.html?key=${Config.PLAID_PUBLIC_KEY}&env=sandbox&product=transactions,auth&selectAccount=true&clientName=Money%20Alarms&isWebView=true&apiVersion=v2&webhook=https://requestb.in/s6e29ss6`;
     return (
       <View style={styles.container}>

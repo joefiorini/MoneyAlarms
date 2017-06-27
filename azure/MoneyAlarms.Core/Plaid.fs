@@ -267,11 +267,11 @@ module Institutions =
 
     let get: PlaidServiceEndpoint<Get> =
       fun serviceConfig institutionId ->
-        let url = serviceConfig.Host + "/item/institutions/get_by_id"
+        let url = serviceConfig.Host + "/institutions/get_by_id"
         let requestBody =
             InstitutionRequestDto.Root
-                ( serviceConfig.PublicKey,
-                  institutionId
+                ( institutionId,
+                  serviceConfig.PublicKey
                 )
 
         let (response: HttpResponseMessage, content) =
@@ -298,7 +298,7 @@ module Accounts =
       "access_token": "access-sandbox-7de224ab-7359-4876-9360-4bf286e80a39"
     }
     """
-    type GetAccountsDto = JsonProvider<accountsRequestSample>.Root
+    type GetAccountsDto = JsonProvider<accountsRequestSample>
 
     [<Literal>]
     let accountsDtoSample = """
@@ -357,9 +357,9 @@ module Accounts =
     type Get = PlaidAccessToken -> PlaidResult<AccountsDto>
     let get: PlaidServiceEndpoint<Get> =
         fun serviceConfig accessToken ->
-                let url = serviceConfig.Host + "/item/accounts/get"
+                let url = serviceConfig.Host + "/accounts/get"
                 let requestBody =
-                    GetAccountsDto
+                    GetAccountsDto.Root
                         ( serviceConfig.ClientId,
                           serviceConfig.Secret,
                           accessToken

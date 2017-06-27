@@ -1,9 +1,9 @@
 #I __SOURCE_DIRECTORY__
 #r "System.Net.Http"
-#r "Newtonsoft.Json"
-#r "../bin/FSharp.Data.dll"
-#r "../bin/FSharp.Data.DesignTime.dll"
-#r "../bin/MoneyAlarms.Core.dll"
+#r "./bin/Newtonsoft.Json"
+#r "./bin/FSharp.Data.dll"
+#r "./bin/FSharp.Data.DesignTime.dll"
+#r "./bin/MoneyAlarms.Core.dll"
 
 open System
 open System.Net
@@ -14,10 +14,24 @@ open MoneyAlarms.Core
 open FSharp.Data
 open FSharp.Extensions
 
-let Run(req: HttpRequestMessage, log: TraceWriter) =
+type Log =
+    { Info: string -> unit
+    }
+
+let log = {
+    Info = fun s -> printfn "%A" s
+    }
+
+let Run () =
     async {
         log.Info("Reading data from request")
-        let! data = req.Content.ReadAsStringAsync() |> Async.AwaitTask
+        let data = """
+        {
+          "plaid_public_token":"public-sandbox-c3afcaf5-b3bc-4d58-b713-9aae79defbda",
+          "firebase_user_id":"mYfbsFHD9FQNuijiIrGHioUeIgT2"
+        }
+        """
+        // let! data = req.Content.ReadAsStringAsync() |> Async.AwaitTask
 
         // if (String.IsNullOrEmpty(data)) then
         //     return req.CreateResponse(HttpStatusCode.BadRequest, "Need a body")
@@ -66,4 +80,6 @@ let Run(req: HttpRequestMessage, log: TraceWriter) =
         //   return req.CreateResponse(HttpStatusCode.OK, "Good");
         // | Error e ->
         //   return req.CreateResponse(HttpStatusCode.InternalServerError, sprintf "Error: %A" e)
-    } |> Async.StartAsTask
+    } |> Async.RunSynchronously
+
+Run ()
