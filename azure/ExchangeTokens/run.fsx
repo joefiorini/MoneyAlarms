@@ -1,9 +1,9 @@
 #I __SOURCE_DIRECTORY__
 #r "System.Net.Http"
 #r "Newtonsoft.Json"
-#r "../bin/FSharp.Data.dll"
-#r "../bin/FSharp.Data.DesignTime.dll"
-#r "../bin/MoneyAlarms.Core.dll"
+#r "FSharp.Data.dll"
+#r "FSharp.Data.DesignTime.dll"
+#r "MoneyAlarms.Core.dll"
 
 open System
 open System.Net
@@ -51,14 +51,13 @@ let Run(req: HttpRequestMessage, log: TraceWriter) =
               Firebase.SaveAccount.run firebaseConfig
         let firebaseAddItem = Firebase.AddItem.run firebaseConfig
 
-        let exchangeResult =
-            Commands.CreateAccount.run
-              plaidExchangeToken
-              plaidGetAccounts
-              plaidGetInstitutionName
-              firebaseCreateAccount
-              firebaseAddItem
-              dto
+        let resultFnA = Commands.CreateAccount.run log plaidExchangeToken
+        let resultFnB = resultFnA plaidGetAccounts
+        let resultFnC = resultFnB plaidGetInstitutionName
+        let resultFnD = resultFnC firebaseCreateAccount
+        let resultFnE = resultFnD firebaseAddItem
+
+        let exchangeResult = resultFnE dto
 
         log.Info(sprintf "Got exchangeResult: %A" exchangeResult)
         // match exchangeResult with

@@ -2,3 +2,4 @@ FSharp.Data
 Google.Apis.Auth
 FSharp.Core
 Newtonsoft.Json
+Microsoft.Azure.WebJobs

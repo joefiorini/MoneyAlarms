@@ -6,6 +6,7 @@ nuget FAKE
 nuget FSharp.Core 4.0.0.1
 nuget FSharp.Data
 nuget Google.Apis.Auth
+nuget Microsoft.Azure.WebJobs
 nuget Newtonsoft.Json
 nuget Scotch
 

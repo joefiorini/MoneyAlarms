@@ -20,6 +20,8 @@ open MoneyAlarms.Core
           Result.bind (fun t -> mapError <| fn t)
 
 module CreateAccount =
+  open Microsoft.Azure.WebJobs.Host
+
   type ResultTupleMap<'a,'b,'c,'d> = Result<'a*'b,'c> -> ('a -> 'b -> 'd) -> Result<'d,'c>
   let (|*>): ResultTupleMap<'a,'b,'c,'d> =
       fun r f -> Result.map (fun v -> v ||> f) r
@@ -87,9 +89,9 @@ module CreateAccount =
 
         Result.map <| tupleUp accountsDto <| institutionNameR
 
-  type Run = Plaid.ExchangeToken -> Plaid.Accounts.Get -> Plaid.Institutions.GetName -> Firebase.SaveAccount.Run -> Firebase.AddItem.Run -> TokenExchangeDto -> Result<unit, MoneyAlarmsError>
+  type Run = TraceWriter -> Plaid.ExchangeToken -> Plaid.Accounts.Get -> Plaid.Institutions.GetName -> Firebase.SaveAccount.Run -> Firebase.AddItem.Run -> TokenExchangeDto -> Result<unit, MoneyAlarmsError>
   let run: Run =
-      fun plaidExchangeToken plaidGetAccounts plaidGetInstitutionName firebaseCreateAccount firebaseAddItem dto ->
+      fun log plaidExchangeToken plaidGetAccounts plaidGetInstitutionName firebaseCreateAccount firebaseAddItem dto ->
         let accessToken = DomainTypes.mapError <| plaidExchangeToken dto.PlaidPublicToken
         let accountsAndItem =
           accessToken
@@ -97,15 +99,19 @@ module CreateAccount =
               |> Result.bind (getAccountsWithInstitutionName plaidGetInstitutionName)
               |*> extractAccountsAndItem
 
+        log.Info(sprintf "Made it here with %A" accountsAndItem)
+
         Result.bind
           (fun accessToken ->
+            log.Info(sprintf "Made it into bind with accessToken: %A" accessToken)
             accountsAndItem
               |*> makeFirebaseDtos dto.FirebaseUserId accessToken
               |> resultTupleBind (fun accounts item ->
                         do
-                          printfn "Saving accounts: %A" accounts
+                          log.Info(sprintf "Saving accounts: %A" accounts)
                           Array.map firebaseCreateAccount accounts |> ignore
                           firebaseAddItem dto.FirebaseUserId item
                         Result.map ignore accountsAndItem
                   )
           ) accessToken
+        Ok ()
