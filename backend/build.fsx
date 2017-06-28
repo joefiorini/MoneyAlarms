@@ -5,18 +5,18 @@ open Fake
 open System.IO
 
 // Directories
-let buildDir  = "./build/"
-let releaseDir = "./bin/"
-let deployDir = "./deploy/"
+let buildDir  = "./Debug"
+let releaseDir = "./Release"
+let deployDir = "./deploy"
 
-let azureFunctions = !! "*/function.json"
+let azureFunctions = !! "functions/*/function.json"
 
 // Filesets
 let appReferences  =
-    !! "/**/*.csproj"
-    ++ "/**/*.fsproj"
+    !! "/libraries/**/*.csproj"
+    ++ "/libraries/**/*.fsproj"
 
-let releaseReferences = appReferences -- "MoneyAlarms.Test/*"
+let releaseReferences = appReferences -- "libraries/MoneyAlarms.Test/*"
 // version info
 let version = "0.1"  // or retrieve from CI server
 
@@ -40,13 +40,6 @@ Target "Deploy" (fun _ ->
     !! (buildDir + "/**/*.*")
     -- "*.zip"
     |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip")
-)
-
-Target "PrepareFunctionsBinsDebug" (fun _ ->
-    let files = seq { for file in (!! (buildDir + "/*.dll")) do yield file }
-    printfn "Copying %A" files
-    for func in azureFunctions do
-        Copy ((DirectoryName func) + "/bin/") files
 )
 
 Target "PrepareFunctionsBins" (fun _ ->

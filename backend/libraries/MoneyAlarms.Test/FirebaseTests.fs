@@ -14,7 +14,7 @@ let tests =
     [ testCase "returns the created account" <| fun _ ->
         let httpClient = httpClientForCassette "firebase.successes.json"
         let serviceConfig = ServiceConfig.fromEnvironment httpClient accessToken
-        let testAccount = AccountJson.GetSample()
+        let testAccount = AccountDto.GetSample()
 
         let result = run serviceConfig testAccount
 
@@ -25,7 +25,7 @@ let tests =
         // printfn "%A" firebaseToken
         let httpClient = httpClientForCassette "firebase.successes.json"
         let serviceConfig = ServiceConfig.fromEnvironment httpClient accessToken
-        let testAccount = AccountJson.GetSample()
+        let testAccount = AccountDto.GetSample()
         let getAccount = getAccountByAccountId serviceConfig
         let accountId = "-KnblGYOWOtYDRq0WR1x"
 

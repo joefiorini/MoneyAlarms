@@ -4,6 +4,7 @@ open Expecto
 open MoneyAlarms.Core
 open Firebase
 open Plaid
+open Microsoft.Azure.WebJobs.Host
 
 type CheckError = MoneyAlarmsError -> MoneyAlarmsError
 
@@ -44,6 +45,11 @@ let firebasePersistAccountsAndItem account =
 let addItem userId item =
     Ok item
 
+type Log (level) =
+    inherit TraceWriter(level:System.Diagnostics.TraceLevel)
+    new () = Log(System.Diagnostics.TraceLevel.Verbose)
+    override this.Trace(event) = printfn "%A" event
+
 [<Tests>]
 let tests =
   testList "ExchangeTokens" [
@@ -53,8 +59,9 @@ let tests =
           FirebaseUserId = "UserId"
         }
 
-      let accounts =
+      let result =
         Commands.CreateAccount.run
+          (Log())
           plaidExchangeToken
           plaidGetAccounts
           plaidGetInstitutionName
@@ -62,26 +69,7 @@ let tests =
           addItem
           dto
 
-      let expected =
-        [ { AccountId = "ekvG5RD76BCWRRw1eJ8vhdQrK7DdoLSLDbnva"
-            Name = "Plaid Checking"
-            OfficialName = "Plaid Gold Standard 0% Interest Checking"
-            Mask = "0000"
-            Type = "depository"
-            SubType = "checking"
-            InstitutionName = "Chase"
-          }
-          { AccountId = "Q4Jd5RAvzLsW44wNKva9h9R3Pvd9yzSpogAP3"
-            Name = "Plaid Saving"
-            OfficialName = "Plaid Silver Standard 0.1% Interest Saving"
-            Mask = "1111"
-            Type = "depository"
-            SubType = "savings"
-            InstitutionName = "Chase"
-          }
-        ]
-
-      expectResult (Result.map Array.toList accounts) (expected) "Expected account to be equal"
+      Expect.isOk result "Expected account to be equal"
 
     testCase "Returns error when plaid fails" <| fun _ ->
       let dto =
@@ -94,6 +82,7 @@ let tests =
 
       let result =
         Commands.CreateAccount.run
+          (Log())
           plaidExchangeToken
           plaidGetAccounts
           plaidGetInstitutionName
@@ -119,6 +108,7 @@ let tests =
 
       let result =
         Commands.CreateAccount.run
+          (Log())
           plaidExchangeToken
           plaidGetAccounts
           plaidGetInstitutionName

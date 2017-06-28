@@ -5,7 +5,7 @@ npm-debug.*
 .env
 obj
 
-azure/packages
+packages
 paket.exe
 paket.exe.config
 MoneyAlarms.PublishSettings

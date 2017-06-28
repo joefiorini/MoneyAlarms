@@ -4,6 +4,7 @@
 lib/debug
 lib/release
 Debug
+Release
 *.suo
 *.user
 obj
