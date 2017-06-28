@@ -1,9 +1,9 @@
 #I __SOURCE_DIRECTORY__
 #r "System.Net.Http"
 #r "Newtonsoft.Json"
-#r "FSharp.Data.dll"
-#r "FSharp.Data.DesignTime.dll"
-#r "MoneyAlarms.Core.dll"
+#r "bin\FSharp.Data.dll"
+#r "bin\FSharp.Data.DesignTime.dll"
+#r "bin\MoneyAlarms.Core.dll"
 
 open System
 open System.Net
