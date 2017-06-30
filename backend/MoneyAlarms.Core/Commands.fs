@@ -74,6 +74,7 @@ module CreateAccount =
           Firebase.AddItem.PlaidItemDto.Root
             ( item.InstitutionId,
               item.ItemId,
+              accessToken,
               item.Webhook
             )
         )
@@ -87,7 +88,7 @@ module CreateAccount =
 
         Result.map <| tupleUp accountsDto <| institutionNameR
 
-  type Run = Plaid.ExchangeToken -> Plaid.Accounts.Get -> Plaid.Institutions.GetName -> Firebase.SaveAccount.Run -> Firebase.AddItem.Run -> TokenExchangeDto -> Result<unit, MoneyAlarmsError>
+  type Run = Plaid.ExchangeToken -> Plaid.Accounts.Get -> Plaid.Institutions.GetName -> Firebase.SaveAccount.Run -> Firebase.AddItem.Run -> TokenExchangeDto.Root -> Result<unit, MoneyAlarmsError>
   let run: Run =
       fun plaidExchangeToken plaidGetAccounts plaidGetInstitutionName firebaseCreateAccount firebaseAddItem dto ->
         printfn "Take 4"

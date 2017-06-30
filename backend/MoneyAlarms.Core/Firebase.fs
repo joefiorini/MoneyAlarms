@@ -42,13 +42,10 @@ module AccessToken =
 
   open HttpUtils
 
-  let serviceAccountEmail = Environment.GetEnvironmentVariable("FIREBASE_ADMIN_CLIENT_EMAIL")
-  let private tokenUri = Environment.GetEnvironmentVariable("FIREBASE_ADMIN_TOKEN_URI")
-
-  let generate () =
+  let generate (serviceAccountEmail: string) (adminPrivateKey: string) =
       async {
         let privateKey =
-          Environment.GetEnvironmentVariable("FIREBASE_ADMIN_PRIVATE_KEY").Replace("\\n", Environment.NewLine)
+          adminPrivateKey.Replace("\\n", Environment.NewLine)
         let initializer = new ServiceAccountCredential.Initializer(serviceAccountEmail)
         initializer.Scopes <- ["https://www.googleapis.com/auth/userinfo.email"; "https://www.googleapis.com/auth/firebase.database"]
         let credential = new ServiceAccountCredential(initializer.FromPrivateKey(privateKey))
@@ -56,8 +53,8 @@ module AccessToken =
         if status then
             return credential.Token.AccessToken
         else
-            failwith "Did not get a token"
-            return ""
+          failwith "Did not get a token"
+          return ""
       } |> Async.RunSynchronously
 
 module ServiceConfig =
@@ -116,9 +113,9 @@ module SaveAccount =
       {
           "firebase_user_id": "5Hu5khcyxmgmOTMMm1AzlcyDClC2",
           "plaid_account_id": "y4W8N4pk4ET5nNbAqZM6HaEPoDGRVLioJW1Jw",
-          "plaid_access_token": "access-sandbox-265c9150-193c-4b8e-a6c2-189411592c7e",
           "name": "Plaid Checking",
           "official_name": "Plaid Gold Checking",
+          "type": "Depository",
           "subtype": "checking",
           "mask": "aaaa",
           "institution_name": "Houndstooth Bank"
@@ -221,6 +218,7 @@ module AddItem =
         {
             "institution_id": "ins_3",
             "item_id": "KznK5LWGR7UMBBJPXzRQUyRxylgQlPHeLxnLzM",
+            "plaid_access_token": "access-sandbox-265c9150-193c-4b8e-a6c2-189411592c7e",
             "webhook": "https://requestb.in/s6e29ss6"
         }
     """

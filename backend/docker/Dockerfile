@@ -1,6 +1,6 @@
 FROM joefiorini/dockerskeleton:mono
 
-ADD stage/MoneyAlarms.Dispatch.* /action/
+ADD stage/* /action/
 
 ADD exec /action/exec
 RUN chmod +x /action/exec

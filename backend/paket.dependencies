@@ -9,6 +9,7 @@ nuget Google.Apis.Auth
 nuget Microsoft.Azure.WebJobs
 nuget Newtonsoft.Json
 nuget Scotch
+nuget System.Net.Http 4.3.1
 
 group Testing
   source https://www.nuget.org/api/v2

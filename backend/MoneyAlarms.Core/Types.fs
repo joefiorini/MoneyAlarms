@@ -2,15 +2,22 @@ namespace MoneyAlarms.Core
 
 open Firebase
 open Plaid
+open FSharp.Data
 
 type PublicToken = string
 type ItemAccessToken = string
 type AccountId = string
 
-type TokenExchangeDto =
-    { PlaidPublicToken: PublicToken
-      FirebaseUserId: FirebaseUserId
+module TokenExchangeSample =
+  [<Literal>]
+  let tokenExchangeSample = """
+    {
+      "plaid_public_token": "A1B2C3",
+      "firebase_user_id": "a1234"
     }
+  """
+
+type TokenExchangeDto = JsonProvider<TokenExchangeSample.tokenExchangeSample>
 
 type ExchangeResultDto =
     { AccessToken: string

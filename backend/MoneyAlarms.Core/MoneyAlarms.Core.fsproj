@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Name>MoneyAlarms.Core</Name>
@@ -35,6 +35,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
@@ -260,15 +261,6 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3' Or $(TargetFrameworkVersion) == 'v4.7')">
-      <ItemGroup>
-        <Reference Include="Microsoft.Win32.Registry">
-          <HintPath>..\packages\Microsoft.Win32.Registry\lib\net46\Microsoft.Win32.Registry.dll</HintPath>
-          <Private>True</Private>
-          <Paket>True</Paket>
-        </Reference>
-      </ItemGroup>
-    </When>
     <When Condition="($(TargetFrameworkIdentifier) == '.NETStandard' And ($(TargetFrameworkVersion) == 'v1.4' Or $(TargetFrameworkVersion) == 'v1.5' Or $(TargetFrameworkVersion) == 'v1.6' Or $(TargetFrameworkVersion) == 'v2.0')) Or ($(TargetFrameworkIdentifier) == '.NETCoreApp' And ($(TargetFrameworkVersion) == 'v1.0' Or $(TargetFrameworkVersion) == 'v1.1' Or $(TargetFrameworkVersion) == 'v2.0'))">
       <ItemGroup>
         <Reference Include="Microsoft.Win32.Registry">
@@ -1261,12 +1253,22 @@
           <Private>False</Private>
           <Paket>True</Paket>
         </Reference>
+        <Reference Include="System.Net.Http">
+          <HintPath>..\packages\System.Net.Http\ref\netstandard1.1\System.Net.Http.xml</HintPath>
+          <Private>False</Private>
+          <Paket>True</Paket>
+        </Reference>
       </ItemGroup>
     </When>
     <When Condition="($(TargetFrameworkIdentifier) == '.NETStandard' And ($(TargetFrameworkVersion) == 'v1.3' Or $(TargetFrameworkVersion) == 'v1.4' Or $(TargetFrameworkVersion) == 'v1.5' Or $(TargetFrameworkVersion) == 'v1.6' Or $(TargetFrameworkVersion) == 'v2.0')) Or ($(TargetFrameworkIdentifier) == '.NETCoreApp' And ($(TargetFrameworkVersion) == 'v1.0' Or $(TargetFrameworkVersion) == 'v1.1' Or $(TargetFrameworkVersion) == 'v2.0'))">
       <ItemGroup>
         <Reference Include="System.Net.Http">
           <HintPath>..\packages\System.Net.Http\ref\netstandard1.3\System.Net.Http.dll</HintPath>
+          <Private>False</Private>
+          <Paket>True</Paket>
+        </Reference>
+        <Reference Include="System.Net.Http">
+          <HintPath>..\packages\System.Net.Http\ref\netstandard1.3\System.Net.Http.xml</HintPath>
           <Private>False</Private>
           <Paket>True</Paket>
         </Reference>

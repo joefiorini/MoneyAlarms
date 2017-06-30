@@ -20,7 +20,7 @@ class Accounts extends React.Component {
     if (e.action.match(/::connected/)) {
       // TODO: Get currentUser into store
       const response = await fetch(
-        'https://moneyalarms.azurewebsites.net/api/ExchangeTokens?code=Wykh0ruO61aXcfwGPZTxzatuhxpmTJU3SdzDtspwxw2zN7MkALA/rQ==',
+        'https://openwhisk.ng.bluemix.net/api/v1/web/joef_dev/default/ExchangeTokens.json',
         {
           method: 'POST',
           headers: {
@@ -28,8 +28,10 @@ class Accounts extends React.Component {
           },
           body: logValue(
             JSON.stringify({
-              plaid_public_token: e.metadata.public_token,
-              firebase_user_id: firebase.auth().currentUser.uid,
+              data: {
+                plaid_public_token: e.metadata.public_token,
+                firebase_user_id: firebase.auth().currentUser.uid,
+              },
             })
           ),
         }

@@ -1,0 +1,20 @@
+{
+  "FIREBASE_API_KEY": "AIzaSyAIlo5TuhOkdKpgAKaD6INHVoi48WQft0k",
+  "PLAID_SECRET": "0fc8e1e051782bd8c7a0a890c9ed7a",
+  "action_name": "ExchangeTokens",
+  "FIREBASE_STORAGE_BUCKET": "moneyalarms.appspot.com",
+  "data": {
+    "firebase_user_id": "diddy",
+    "plaid_public_token": "blah"
+  },
+  "FIREBASE_AUTH_DOMAIN": "moneyalarms.firebaseapp.com",
+  "PLAID_HOST": "https://sandbox.plaid.com",
+  "PLAID_PUBLIC_KEY": "20a9a7a8486ee80d347ba4b6d9b7bd",
+  "FIREBASE_ADMIN_PRIVATE_KEY": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQD3aLNzNeGZ41vA\nNj7ty3JZWvz6Hz8cBXlHPT9aes+R8I4j4LeEzYJhCrJXJpmlxX0Fv/P5AMXWp06V\ncohxsdQ410lu7DMHHjbZBJBSOpCMgRMyIK9YlTKFSEKpnL+5LHXhjXzeLh+sEUOx\ncjVR8t7D1y5SfDvtle+qZcGuBtHUD7FHIq9MjFsrtO02iN7CZUhQJVxsrEsrLK9K\nJ356n3vT4V3QvtWGTpIr7AtzZCk0P0CI4ZyRcQS8w2Ps3e6YMs5VQkrurpVbdkUC\nDkS3xDO+6KAmYwRCfn+3gfNBwmAAPZ6iqshy3UjMLtKQjV9rH+OH3n7ctkfdp+nr\nBMzrAj0XAgMBAAECggEAIdvhWy4PjujvoJGL8S07nAD4yB5Im8QgAeDe77oI+DcM\nrNpPI0ygwDkfiQ/OTUKGxqercvNpH+RLu+YtyCmHGrRT52tJ3HqFFRQr0CUVrTTo\n9J5GgQACJv1pqh66mlP8Wf7sDNgRG5JNSlaP94QeenzTaRR5ex1e7Fn6tJ9YTgYG\n4E+67381KT5fE/i0WxW3UznAxQk8FkwID+6YH8a1P5iaK7lMtRChfV+u8zd0MFY2\nGXJXT3afyhnG7TPWhch3wia8r+j63/dr2wO9WvCaoyEwBqUn8XPg9BYkmLUn0veG\nvckIm4uagHhRTEvN7++2HNuDEGW7hh3IoCgFmeUp4QKBgQD+lzI9UCtB1tnPDjhm\naaHRrBRO20mheUgLlwRDhKiLHVfrJryqNLqY6THbDeNqSybV1lGeunsBbYN14bYc\nmc5dLmCPCOAX1p2EaliSurAqCfg/3DOjXl9ZaH9CBOXOVp33ElurgLMEL+HJvaVI\nl/2VO2nFfVHgGtcnHojmWkB40QKBgQD4x1O1vWjt7wAK/tkQ/9nM/AEu8L8jTOfM\nJVjU/tigjmj5EAkQcxPbohVuVk5/uQvnEW0P6a/Y/Q8XqNUcePvYi2x8JKrRaFpB\nggARMBXZInZokmvt7poZqkmaAhlg4ShpRkaJ/canBh00E8C410ES0+47naZXYbuW\n7iVdrT/RZwKBgQCtVK0ct1csFSXnZWwatbI5OSn+YifoKtVVJrT9bvT8+bZg39e1\nHf8omiOaWwNI2++NyMN7CMU0PKYy/L/rCwBHyops94LyV+iYPXseMsI7bNw6RiZW\nBKtwCMgTX5hB+hDEJRiKVC4NHLhhjJ9aJDi+gFvL3D2BEWUIOi7Efg/E8QKBgQCB\nq+QGJuQ6oQj0skGSismL/w7e2L3IOJ3Z2t2ip/NiPNiaebE/0bvYD3P8PyBLkriR\niJPAZ54xDDaBro7meGlNRd8WFkazQCFLY+eFDftVYpE1kJyROH06Q3h5vf5ccQAP\nX4IFCzIwfQ9bxa/+qLRSjATxLgs2IMsWsKrpWRSaoQKBgQCi+gK5vfEeNMnhZWhb\nkFGNV4yBsP7Na+Ew7ioOmxdYXUwYq/bo26/kgHalD8POT2Wrv3CVAga8LHYzoQXB\nj04AjuMpSKTDT/d6IgZcerug8V2KP3uYO7Goyxaaabzl6LgBEgcZlzM3cEOTx6qj\nErKUj/2LhNSkREZp1Ue6I1qlYw==\n-----END PRIVATE KEY-----\n",
+  "FIREBASE_PROJECT_ID": "moneyalarms",
+  "FIREBASE_ADMIN_TOKEN_URI": "https://accounts.google.com/o/oauth2/token",
+  "FIREBASE_ADMIN_CLIENT_EMAIL": "firebase-adminsdk-r4qi8@moneyalarms.iam.gserviceaccount.com",
+  "FIREBASE_DATABASE_URL": "https://moneyalarms.firebaseio.com",
+  "FIREBASE_MESSAGE_SENDER_ID": 1010497091858,
+  "PLAID_CLIENT_ID": "57001580152e16ec4a51293c"
+}

@@ -1,9 +1,11 @@
 // include Fake libs
 #r "./packages/FAKE/tools/FakeLib.dll"
+#r "./packages/testing/DotEnvFile/lib/net452/DotEnvFile.dll"
 
 open Fake
 open System
 open System.IO
+open DotEnvFile
 
 // Directories
 let buildDir  = "./Debug"
@@ -11,10 +13,19 @@ let releaseDir = "./Release"
 let deployDir = "./deploy"
 let dockerDir = "./docker"
 
+let inline toMap kvps =
+    kvps
+    |> Seq.map (|KeyValue|)
+    |> Map.ofSeq
+
+let dotEnvPath = "../.env"
+let dotEnvVars = DotEnvFile.LoadFile(dotEnvPath) |> toMap
+
 let actions =
-    [ "Blah"
-      "Doo"
-      "Deedee"
+    [ "TestError"
+      "TestSuccess"
+      "TestNotFound"
+      "ExchangeTokens"
     ]
 
 // Filesets
@@ -33,10 +44,8 @@ type IsWeb =
     | False
     | Raw
 
-type WskParam =
-    string * string
 type WskParams =
-    WskParam list
+    Map<string,string>
 
 type WskActionMutation = ActionName * DockerImage * IsWeb * WskParams
 
@@ -70,7 +79,7 @@ Target "Deploy" (fun _ ->
 let makeDockerImage = sprintf "joefiorini/money-alarms:Dispatcher"
 
 Target "BuildDockerImage" (fun _ ->
-    Copy "docker/stage/" (!! "Debug/MoneyAlarms.Dispatch.*")
+    Copy "docker/stage/" (!! "Debug/*")
     let result =
       ExecProcess (fun info ->
         info.FileName <- "docker"
@@ -114,7 +123,7 @@ Target "DeleteDockerImages"  (fun _ ->
 
 let msprintf fn s = sprintf "%s" <| fn s
 
-let makeParamArg s (key, value) =
+let makeParamArg s key value =
     sprintf "%s --param %s %s" s key value
 
 let buildWskMutation =
@@ -127,7 +136,7 @@ let buildWskMutation =
               "%s --docker %s %s %s"
               actionName
               dockerImage
-              <| List.fold makeParamArg "" paramValues
+              <| Map.fold makeParamArg "" paramValues
 
 type RunWskAction = WskActionCommand -> Result<unit, int>
 let runWskAction: RunWskAction =
@@ -154,11 +163,14 @@ let runWskAction: RunWskAction =
         else
           Ok ()
 
+let paramsForAction actionName =
+    Map.add "action_name"  actionName dotEnvVars
+
 let runActionMutation t actions =
   List.iter (fun actionName ->
     let result =
       runWskAction <|
-        t (makeDockerImage, actionName, True, [("action_name", actionName)])
+        t (makeDockerImage, actionName, True, paramsForAction actionName)
 
     match result with
       | Ok () -> printfn "Created action %s" actionName
