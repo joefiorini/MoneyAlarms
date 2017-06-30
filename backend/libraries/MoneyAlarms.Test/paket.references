@@ -3,6 +3,5 @@ FSharp.Data
 Expecto
 Expecto.BenchmarkDotNet
 Expecto.FsCheck
-FSharp.Core
 group Testing
 DotEnvFile

@@ -4,10 +4,10 @@
 lib/debug
 lib/release
 Debug
-Release
 *.suo
 *.user
 obj
+bin
 
 
 ### Linux ###
@@ -390,5 +390,3 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
-
-docker/stage
