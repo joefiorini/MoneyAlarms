@@ -374,3 +374,175 @@ module Accounts =
                     Error (PlaidError (errorCode, parsedError))
                 else
                     Ok <| AccountsJson.Parse content
+
+module Transactions =
+    open Chiron
+    open Chiron.Operators
+
+    type StartDate = string
+    type EndDate = string
+    type TransactionCount = int
+
+    type Query =
+        {
+            StartDate: string
+            EndDate: string
+            TransactionCount: TransactionCount
+            AccessToken: PlaidAccessToken
+        }
+
+        static member Create startDate endDate tCount accessToken =
+            { StartDate = startDate
+              EndDate = endDate
+              TransactionCount = tCount
+              AccessToken = accessToken
+            }
+
+
+    type TransactionRequestDto =
+        {
+            StartDate: string
+            EndDate: string
+            Count: TransactionCount
+            Offset: int
+            AccessToken: PlaidAccessToken
+            ClientId: PlaidClientId
+            Secret: PlaidSecret
+        }
+        static member FromQuery (q: Query) clientId secret =
+            { StartDate = q.StartDate
+              EndDate = q.EndDate
+              Count = q.TransactionCount
+              AccessToken = q.AccessToken
+              Offset = 0
+              ClientId = clientId
+              Secret = secret
+            }
+
+        static member OptionsToJson (count: int, offset: int): Json<unit> =
+            Json.write "count" count
+            *> Json.write "offset" offset
+
+        static member ToJson (obj: TransactionRequestDto) =
+            let inJsonObject writer =
+                writer (Json.Object Map.empty) |> snd
+
+            Json.write "start_date" obj.StartDate
+            *> Json.write "end_date" obj.EndDate
+            *> Json.writeWith (TransactionRequestDto.OptionsToJson >> inJsonObject) "options" (obj.Count, obj.Offset)
+            *> Json.write "client_id" obj.ClientId
+            *> Json.write "access_token" obj.AccessToken
+            *> Json.write "secret" obj.Secret
+
+    type CategoryDto = string list
+    type CoordinatesDto =
+        { Lat: string
+          Lon: string
+        }
+
+        static member FromJson (_: CoordinatesDto) =
+              fun lat lon ->
+                  { Lat = lat
+                    Lon = lon
+                  }
+            <!> Json.read "lat"
+            <*> Json.read "lon"
+
+    type LocationDto =
+        { Address: string option
+          City: string option
+          State: string option
+          Zip: string option
+          Coordinates: CoordinatesDto option
+        }
+
+        static member FromJson (_: LocationDto) =
+              fun address city state zip coordinates ->
+                  { Address = address
+                    City = city
+                    State = state
+                    Zip = zip
+                    Coordinates = coordinates
+                  }
+            <!> Json.readOrDefault "address" None
+            <*> Json.readOrDefault "city" None
+            <*> Json.readOrDefault "state" None
+            <*> Json.readOrDefault "zip" None
+            <*> Json.readOrDefault "coordinates" None
+
+    type TransactionDto =
+        {
+            AccountId: string
+            Amount: float
+            Category: CategoryDto option
+            CategoryId: string option
+            Date: string
+            Location: LocationDto
+            Name: string
+            Pending: bool
+            PendingTransactionId: string option
+            AccountOwner: string option
+            TransactionId: string
+            TransactionType: string
+        }
+        static member FromJson (_: TransactionDto) =
+            fun accountId amount category categoryId date location name pending pendingTransactionId accountOwner transactionId transactionType ->
+                { AccountId = accountId
+                  Amount = amount
+                  Category = category
+                  CategoryId = categoryId
+                  Date = date
+                  Location = location
+                  Name = name
+                  Pending = pending
+                  PendingTransactionId = pendingTransactionId
+                  AccountOwner = accountOwner
+                  TransactionId = transactionId
+                  TransactionType = transactionType
+                }
+          <!> Json.read "account_id"
+          <*> Json.read "amount"
+          <*> Json.readOrDefault "category" None
+          <*> Json.readOrDefault "category_id" None
+          <*> Json.read "date"
+          <*> Json.read "location"
+          <*> Json.read "name"
+          <*> Json.read "pending"
+          <*> Json.readOrDefault "pending_transaction_id" None
+          <*> Json.readOrDefault "account_owner" None
+          <*> Json.read "transaction_id"
+          <*> Json.read "transaction_type"
+
+    type TransactionResponseDto =
+        { Transactions: TransactionDto list
+        }
+        static member FromJson (_: TransactionResponseDto) =
+            fun transactions ->
+                { Transactions = transactions
+                }
+          <!> Json.read "transactions"
+
+    type Get = Query -> PlaidResult<TransactionDto list>
+    let get: PlaidServiceEndpoint<Get> =
+        fun serviceConfig query ->
+            let url = serviceConfig.Host + "/transactions/get"
+            let requestDto =
+                TransactionRequestDto.FromQuery
+                  query
+                  serviceConfig.ClientId
+                  serviceConfig.Secret
+
+            let requestBody = Json.serialize requestDto
+
+            printfn "Making request with: %A" <| Json.format requestBody
+            let (response: HttpResponseMessage, content) =
+                PostJson.sync serviceConfig.HttpClient url <| Json.format requestBody
+
+            if not response.IsSuccessStatusCode then
+                let parsedError = DetailedError.Parse content
+                let errorCode = errorCodeFromString parsedError.ErrorCode
+                Result.Error (PlaidError (errorCode, parsedError))
+            else
+                printfn "Got response: %A" content
+                let transactions: TransactionResponseDto = Json.deserialize <| Json.parse content
+                Ok transactions.Transactions

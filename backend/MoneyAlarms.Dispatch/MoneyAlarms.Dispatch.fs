@@ -1,35 +1,43 @@
 module MoneyAlarms.Dispatch.Entry
 
-open FSharp.Data
-open FSharp.Data.JsonExtensions
+open Chiron
+open Aether
+open Aether.Operators
 
 type Dispatcher =
-    | Command of (JsonValue -> Result<unit, string>)
+    | Command of (Json -> Result<unit, string>)
     | UnknownCommand of string
 
 let loadAction =
     function
-        | "ExchangeTokens" -> Command MoneyAlarms.Dispatch.Commands.exchangeTokens
-        | "TestError" -> Command <| fun _ -> Error "Oops, I suck"
-        | "TestSuccess" ->
-            Command <|
-              fun payload ->
-                do printfn "Got payload: %A" payload
-                Ok ()
+        // | "ExchangeTokens" -> Command MoneyAlarms.Dispatch.Commands.exchangeTokens
+        | "PersistTransactions" -> Command MoneyAlarms.Dispatch.PersistTransactions.run
+        // | "TestError" -> Command <| fun _ -> Error "Oops, I suck"
+        // | "TestSuccess" ->
+        //     Command <|
+        //       fun payload ->
+        //         do printfn "Got payload: %A" payload
+        //         Ok ()
         | (v: string) -> UnknownCommand v
+
+let actionName_ =
+    Json.Object_ >?> Map.key_ "action_name" >?> Json.String_
 
 [<EntryPoint>]
 let main argv =
     printfn "Args: %A" argv
-    let payload = JsonValue.Parse(argv.[0])
-    let actionName = payload?action_name.AsString()
+    let payload = Json.parse(argv.[0])
+    let (Value actionName), payload =
+      payload
+      |> Json.Optic.get actionName_
+
     match loadAction actionName with
         | Command fn -> fn payload
-        | _ -> Error <| sprintf "Action not found: %s" actionName
+        | _ -> Result.Error <| sprintf "Action not found: %s" actionName
     |> function
         | Ok _ ->
             printfn """{ "result": "success" }"""
             0
-        | Error e ->
+        | Result.Error e ->
             printfn """{ "result": "failure", "message": "%s" }""" e
             1

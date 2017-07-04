@@ -73,7 +73,10 @@ class Accounts extends React.Component {
     }
   }
   render() {
-    const plaidURL = `https://cdn.plaid.com/link/v2/stable/link.html?key=${Config.PLAID_PUBLIC_KEY}&env=sandbox&product=transactions,auth&selectAccount=true&clientName=Money%20Alarms&isWebView=true&apiVersion=v2&webhook=https://requestb.in/s6e29ss6`;
+    const webhookUrl = `https://openwhisk.ng.bluemix.net/api/v1/web/joef_dev/default/PersistTransactions.json?firebase_user_id=${firebase.auth().currentUser.uid}`;
+    const plaidURL = `https://cdn.plaid.com/link/v2/stable/link.html?key=${Config.PLAID_PUBLIC_KEY}&env=sandbox&product=transactions,auth&selectAccount=true&clientName=Money%20Alarms&isWebView=true&apiVersion=v2&webhook=${encodeURIComponent(
+      webhookUrl
+    )}`;
     return (
       <View style={styles.container}>
         <Text>Accounts</Text>

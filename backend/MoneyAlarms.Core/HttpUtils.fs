@@ -25,7 +25,7 @@ module PostJson =
       fun httpClient url body ->
         async {
           let request = new HttpRequestMessage()
-          request.RequestUri <- new Uri(url)
+          request.RequestUri <- Uri(url)
           request.Method <- System.Net.Http.HttpMethod.Post
 
           let reqContent = new StringContent(body)
@@ -38,22 +38,3 @@ module PostJson =
 
           return (response, content)
         } |> Async.RunSynchronously
-
-module PostForm =
-  type PostFormSync = HttpClient -> string -> Map<string,string> -> HttpResponseMessage * string
-  let sync: PostFormSync =
-      fun httpClient url params ->
-          async {
-            let request = new HttpRequestMessage()
-            request.RequestUri <- new Uri(url)
-            request.Method <- System.Net.Http.HttpMethod.Post
-
-            let reqContent = new FormUrlEncodedContent(params)
-            request.Content <- reqContent
-
-            let! response = httpClient.SendAsync(request) |> Async.AwaitTask
-
-            let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
-
-            return (response, content)
-          } |> Async.RunSynchronously

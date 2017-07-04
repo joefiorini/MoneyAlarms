@@ -1,5 +1,5 @@
 namespace FSharp.Extensions
 
-[<assembly:AutoOpen("FSharp.Extensions")>]
+[<assembly:AutoOpen("Result.ResultMonad")>]
 
 do()

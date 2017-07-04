@@ -30,8 +30,12 @@ type FirebaseAccount =
 type FirebaseError =
     | FirebaseError of string
 
+type FirebaseResult<'T> = Result<'T, FirebaseError>
+
 type FirebaseServiceEndpoint<'t> = FirebaseServiceConfig -> 't
 type CreateAccount =  FirebaseAccount -> Result<FirebaseAccount,FirebaseError>
+
+type PlaidItemId = string
 
 module AccessToken =
 
@@ -133,7 +137,7 @@ module SaveAccount =
   """
   type CreateAccountRequestBody = JsonProvider<createAccountBodySample>
 
-  type GetAccountByAccountId = FirebaseUserId -> string -> Result<Option<string>, FirebaseError>
+  type GetAccountByAccountId = FirebaseUserId -> string -> FirebaseResult<Option<string>>
   let getAccountByAccountId: FirebaseServiceEndpoint<GetAccountByAccountId> =
       // TODO: This is broken because I need to query by the PlaidAccountId, but this
       // is looking for a Firebase ID
@@ -159,7 +163,7 @@ module SaveAccount =
   // map : ('T -> 'U) -> Result<'T, 'TError> -> Result<'U, 'TError>
   // map : ('T -> 'U) -> Option<'T> -> Option<'U>
 
-  type SaveAccount = AccountDto.Root -> string option -> Result<unit, FirebaseError>
+  type SaveAccount = AccountDto.Root -> string option -> FirebaseResult<unit>
   let saveAccount: FirebaseServiceEndpoint<SaveAccount> =
       fun serviceConfig account accountO ->
           if Option.isNone accountO then
@@ -175,7 +179,7 @@ module SaveAccount =
           else
               Ok ()
 
-  type Run = AccountDto.Root -> Result<unit,FirebaseError>
+  type Run = AccountDto.Root -> FirebaseResult<unit>
   let run: FirebaseServiceEndpoint<Run> =
     fun serviceConfig account ->
         // Get accounts for current user by AccountId
@@ -224,7 +228,7 @@ module AddItem =
     """
     type PlaidItemDto = JsonProvider<plaidItemDtoSample>
 
-    type Run = FirebaseUserId -> PlaidItemDto.Root -> Result<PlaidItemDto.Root, FirebaseError>
+    type Run = FirebaseUserId -> PlaidItemDto.Root -> FirebaseResult<PlaidItemDto.Root>
     let run: FirebaseServiceEndpoint<Run> =
         fun serviceConfig userId itemDto ->
             let (response: HttpResponseMessage, content) =
@@ -237,3 +241,72 @@ module AddItem =
             else
 
                 Ok itemDto
+
+module CachedValues =
+
+    type CachedValues =
+        { LastTransactionCount: int
+        }
+
+        static member getTransactionCount (obj: CachedValues) =
+            obj.LastTransactionCount
+
+    type GetForUser = FirebaseUserId -> FirebaseResult<CachedValues>
+    let getForUser: GetForUser =
+      fun userId ->
+          Ok
+          <| { LastTransactionCount = 20 }
+
+module PlaidItems =
+    type GetAccessTokenForItemId = PlaidItemId -> FirebaseResult<ItemAccessToken>
+    let getAccessTokenForItemId: GetAccessTokenForItemId =
+        fun itemId ->
+            Ok "blah"
+
+module Persistence =
+    open Chiron
+    open Chiron.Operators
+
+    type CategoryDto = string list
+
+    type CoordinatesDto =
+        { Lat: string
+          Lon: string
+        }
+
+        static member FromJson (_: CoordinatesDto) =
+              fun lat lon ->
+                  { Lat = lat
+                    Lon = lon
+                  }
+            <!> Json.read "lat"
+            <*> Json.read "lon"
+
+    type LocationDto =
+        { Address: string
+          City: string
+          State: string
+          Zip: string
+          Coordinates: CoordinatesDto
+        }
+
+    type TransactionDto =
+        { AccountId: string
+          Amount: float
+          Category: CategoryDto
+          CategoryId: string
+          Date: string
+          Location: LocationDto
+          Name: string
+          Pending: bool
+          PendingTransactionId: string option
+          AccountOwner: string option
+          TransactionId: string
+          TransactionType: string
+        }
+
+    type Save<'T> = string -> 'T -> FirebaseResult<unit>
+    let save: Save<'T> =
+        fun ns dto ->
+            printfn "Saving: %A" dto
+            Ok ()

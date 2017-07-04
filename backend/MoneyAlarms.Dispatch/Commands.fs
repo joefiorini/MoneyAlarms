@@ -27,53 +27,53 @@ module MoneyAlarms.Dispatch.Commands
         httpClient
 
 
-  let exchangeTokens payload =
-      async {
-          printfn "Got data: %s" <| payload.ToString()
-          let httpClient = new HttpClient()
+  // let exchangeTokens payload =
+  //     async {
+  //         printfn "Got data: %s" <| payload.ToString()
+  //         let httpClient = new HttpClient()
 
-          let dto = TokenExchangeDto.Parse (payload?data.ToString())
+  //         let dto = TokenExchangeDto.Parse (payload?data.ToString())
 
-          ServicePointManager.SecurityProtocol <- SecurityProtocolType.Tls12
+  //         ServicePointManager.SecurityProtocol <- SecurityProtocolType.Tls12
 
-          printfn "Made DTO: %A" dto
-          let plaidConfig = plaidConfigFromPayload httpClient payload
-          printfn "Got plaid config: %A" plaidConfig
-          let plaidExchangeToken = Plaid.plaidExchangeToken plaidConfig
-          let plaidGetAccounts = Plaid.Accounts.get plaidConfig
-          let plaidGetInstitutionName = Plaid.Institutions.getName plaidConfig
+  //         printfn "Made DTO: %A" dto
+  //         let plaidConfig = plaidConfigFromPayload httpClient payload
+  //         printfn "Got plaid config: %A" plaidConfig
+  //         let plaidExchangeToken = Plaid.plaidExchangeToken plaidConfig
+  //         let plaidGetAccounts = Plaid.Accounts.get plaidConfig
+  //         let plaidGetInstitutionName = Plaid.Institutions.getName plaidConfig
 
-          let firebaseToken =
-            try
-              Firebase.AccessToken.generate
-                <| payload?FIREBASE_ADMIN_CLIENT_EMAIL.AsString()
-                <| payload?FIREBASE_ADMIN_PRIVATE_KEY.AsString()
-            with
-              | ex ->
-                printfn """{ "result": "failure", "message": "%s"}""" <| ex.ToString()
-                raise ex
+  //         let firebaseToken =
+  //           try
+  //             Firebase.AccessToken.generate
+  //               <| payload?FIREBASE_ADMIN_CLIENT_EMAIL.AsString()
+  //               <| payload?FIREBASE_ADMIN_PRIVATE_KEY.AsString()
+  //           with
+  //             | ex ->
+  //               printfn """{ "result": "failure", "message": "%s"}""" <| ex.ToString()
+  //               raise ex
 
-          printfn "Got firebaseToken: %A" firebaseToken
+  //         printfn "Got firebaseToken: %A" firebaseToken
 
-          let firebaseConfig =
-                  firebaseConfigFromPayload httpClient firebaseToken payload
+  //         let firebaseConfig =
+  //                 firebaseConfigFromPayload httpClient firebaseToken payload
 
-          printfn "Got firebase config: %A" firebaseConfig
-          let firebaseCreateAccount =
-                Firebase.SaveAccount.run firebaseConfig
-          let firebaseAddItem = Firebase.AddItem.run firebaseConfig
+  //         printfn "Got firebase config: %A" firebaseConfig
+  //         let firebaseCreateAccount =
+  //               Firebase.SaveAccount.run firebaseConfig
+  //         let firebaseAddItem = Firebase.AddItem.run firebaseConfig
 
-          let result =
-            Commands.CreateAccount.run
-              plaidExchangeToken
-              plaidGetAccounts
-              plaidGetInstitutionName
-              firebaseCreateAccount
-              firebaseAddItem
-              dto
-            |> function
-                | Error e -> Error (e.ToString())
-                | Ok v -> Ok v
+  //         let result =
+  //           Commands.CreateAccount.run
+  //             plaidExchangeToken
+  //             plaidGetAccounts
+  //             plaidGetInstitutionName
+  //             firebaseCreateAccount
+  //             firebaseAddItem
+  //             dto
+  //           |> function
+  //               | Error e -> Error (e.ToString())
+  //               | Ok v -> Ok v
 
-          return result
-      } |> Async.RunSynchronously
+  //         return result
+  //     } |> Async.RunSynchronously

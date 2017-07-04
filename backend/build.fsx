@@ -26,6 +26,7 @@ let actions =
       "TestSuccess"
       "TestNotFound"
       "ExchangeTokens"
+      "PersistTransactions"
     ]
 
 // Filesets
